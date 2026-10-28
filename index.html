@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#123b2b">
+<meta name="description" content="Sahu Construction business management app">
+<link rel="manifest" href="manifest.json">
+<title>Sahu Construction</title>
+<style>
+:root{--green:#123b2b;--green2:#1f6a4a;--mint:#e6f3ec;--bg:#f4f7f5;--ink:#17231d;--muted:#68766e;--line:#dce5df;--white:#fff;--red:#b42318;--orange:#9a5700}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);padding-bottom:78px}
+header{background:var(--green);color:#fff;padding:20px 16px 17px;border-radius:0 0 22px 22px}
+.brand{font-size:22px;font-weight:850;letter-spacing:.2px}.sub{font-size:12px;opacity:.8;margin-top:3px}
+.headrow{display:flex;align-items:center;justify-content:space-between;gap:10px}.pill{font-size:11px;border:1px solid #ffffff55;padding:5px 8px;border-radius:99px}
+main{max-width:760px;margin:auto;padding:14px}
+h2{font-size:17px;margin:8px 0 12px}.muted{color:var(--muted);font-size:12px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{background:white;border:1px solid var(--line);border-radius:15px;padding:13px}.stat small{display:block;color:var(--muted);font-size:12px}.stat strong{display:block;font-size:21px;margin-top:5px}.stat .tag{font-size:11px;color:var(--green2)}
+.panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;margin:12px 0}
+.actions{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.action{background:var(--mint);border:1px solid #d1e8da;border-radius:13px;padding:13px 10px;text-align:left;font-weight:750;color:var(--green);cursor:pointer}.action span{display:block;font-size:12px;font-weight:500;color:#456653;margin-top:4px}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;gap:2px;background:#fff;border-top:1px solid var(--line);padding:7px 4px calc(7px + env(safe-area-inset-bottom));z-index:5}
+nav button{border:0;background:transparent;color:var(--muted);font-size:10px;flex:1;padding:6px 1px;border-radius:10px;cursor:pointer}nav button b{display:block;font-size:19px;margin-bottom:2px}nav button.active{background:var(--mint);color:var(--green);font-weight:800}
+.view{display:none}.view.active{display:block}
+button.primary{background:var(--green2);color:#fff;border:0;border-radius:11px;padding:11px 14px;font-weight:750;cursor:pointer}
+button.secondary{background:#fff;color:var(--green);border:1px solid var(--line);border-radius:10px;padding:9px 11px;font-weight:650;cursor:pointer}
+button.danger{background:#fff1f0;color:var(--red);border:1px solid #ffd2cf;border-radius:9px;padding:7px 9px;cursor:pointer}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}.listitem{border-top:1px solid var(--line);padding:11px 0}.listitem:first-child{border-top:0}.listitem strong{font-size:14px}.amount{font-weight:800;white-space:nowrap}.green{color:var(--green2)}.red{color:var(--red)}
+label{display:block;font-size:12px;color:var(--muted);font-weight:700;margin:10px 0 5px}
+input,select,textarea{width:100%;border:1px solid #cbd8cf;border-radius:10px;padding:11px 10px;font:inherit;font-size:14px;background:#fff;color:var(--ink)}
+textarea{min-height:65px;resize:vertical}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}.full{grid-column:1/-1}
+form .primary{width:100%;margin-top:14px}
+.empty{padding:20px;text-align:center;color:var(--muted);font-size:13px}
+.sectiontop{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:6px 0 12px}
+.chip{display:inline-block;border-radius:99px;background:#eef2ef;color:#42534a;padding:4px 8px;font-size:11px}
+.note{background:#fff7e6;border:1px solid #f3dfb1;border-radius:12px;padding:11px;font-size:12px;color:#704b0a;line-height:1.5}
+.smallbtn{font-size:12px;padding:7px 9px!important}
+hr{border:0;border-top:1px solid var(--line);margin:12px 0}
+@media(min-width:600px){.stats{grid-template-columns:repeat(4,1fr)}.actions{grid-template-columns:repeat(4,1fr)}}
+</style>
+</head>
+<body>
+<header>
+ <div class="headrow"><div><div class="brand">🏗️ SAHU CONSTRUCTION</div><div class="sub">Business Hisab • Labour • Site Management</div></div><span class="pill">FREE PROTOTYPE</span></div>
+</header>
+<main>
+<section id="dashboard" class="view active">
+ <div class="sectiontop"><div><h2>Namaste, Thekedaar Ji 👷</h2><div class="muted" id="todayLabel"></div></div><button class="secondary smallbtn" onclick="exportData()">⬇ Backup</button></div>
+ <div class="stats">
+  <div class="stat"><small>Total Aamdani</small><strong id="dashIncome">₹0</strong><span class="tag">All entries</span></div>
+  <div class="stat"><small>Total Kharcha</small><strong id="dashExpense">₹0</strong><span class="tag">All entries</span></div>
+  <div class="stat"><small>Net Hisab</small><strong id="dashNet">₹0</strong><span class="tag">Income − expense</span></div>
+  <div class="stat"><small>Active Sites</small><strong id="dashSites">0</strong><span class="tag">Project count</span></div>
+ </div>
+ <div class="panel"><h2>Quick Entry / Jaldi Entry</h2><div class="actions">
+  <button class="action" onclick="showView('attendance')">🗓️ Hajiri<span>Daily attendance</span></button>
+  <button class="action" onclick="showView('expenses')">💸 Kharcha<span>Site expenses</span></button>
+  <button class="action" onclick="showView('income')">💰 Aamdani<span>Party payment</span></button>
+  <button class="action" onclick="showView('labour')">👷 Mazdoor<span>Labour & advance</span></button>
+ </div></div>
+ <div class="panel"><div class="row"><h2>Recent Transactions</h2><button class="secondary smallbtn" onclick="showView('reports')">Full report</button></div><div id="recentList" class="muted">Abhi koi entry nahi.</div></div>
+ <div class="note">📌 Ye prototype data isi browser/phone mein save karta hai. Browser data clear ya phone change karne se pehle Backup download kar lena.</div>
+</section>
+
+<section id="sites" class="view">
+ <div class="sectiontop"><h2>🏠 Sites / Projects</h2><button class="primary" onclick="openForm('siteForm')">+ Add Site</button></div>
+ <form id="siteForm" class="panel" hidden onsubmit="saveSite(event)">
+  <h2>Nayi Site Add Karo</h2><input type="hidden" id="siteId">
+  <label>Site / Party Name *</label><input id="siteName" required placeholder="Jaise: Sharma Ji ka ghar">
+  <div class="formgrid"><div><label>Location</label><input id="siteLocation" placeholder="Gaon / area"></div><div><label>Contract Amount ₹</label><input id="siteContract" type="number" min="0" placeholder="0"></div></div>
+  <label>Notes</label><textarea id="siteNotes" placeholder="Kaam ki details"></textarea>
+  <button class="primary" type="submit">Save Site</button> <button class="secondary" type="button" onclick="closeForm('siteForm')">Cancel</button>
+ </form>
+ <div class="panel" id="sitesList"></div>
+</section>
+
+<section id="labour" class="view">
+ <div class="sectiontop"><h2>👷 Labour / Mazdoor</h2><button class="primary" onclick="openForm('labourForm')">+ Add Labour</button></div>
+ <form id="labourForm" class="panel" hidden onsubmit="saveLabour(event)">
+  <h2>Mazdoor Details</h2><input type="hidden" id="labourId">
+  <label>Mazdoor ka Naam *</label><input id="labourName" required placeholder="Poora naam">
+  <div class="formgrid"><div><label>Mobile (optional)</label><input id="labourPhone" type="tel" placeholder="Mobile number"></div><div><label>Daily Rate ₹ *</label><input id="labourRate" type="number" min="0" required placeholder="500"></div></div>
+  <label>Kaam / Role</label><input id="labourRole" placeholder="Mistri / Helper / Steel / Shuttering">
+  <button class="primary" type="submit">Save Labour</button> <button class="secondary" type="button" onclick="closeForm('labourForm')">Cancel</button>
+ </form>
+ <div class="panel" id="labourList"></div>
+ <div class="panel"><h2>💵 Advance Dena / Record Karna</h2><form onsubmit="saveAdvance(event)">
+  <label>Mazdoor</label><select id="advanceLabour" required></select>
+  <div class="formgrid"><div><label>Amount ₹</label><input id="advanceAmount" type="number" min="1" required></div><div><label>Date</label><input id="advanceDate" type="date" required></div></div>
+  <label>Reason / Note</label><input id="advanceNote" placeholder="Advance / ghar kharcha">
+  <button class="primary" type="submit">Save Advance</button>
+ </form><div id="advanceList"></div></div>
+</section>
+
+<section id="attendance" class="view">
+ <h2>🗓️ Daily Attendance / Hajiri</h2>
+ <div class="panel"><form onsubmit="saveAttendance(event)">
+  <div class="formgrid"><div><label>Date *</label><input id="attDate" type="date" required></div><div><label>Site *</label><select id="attSite" required></select></div></div>
+  <label>Mazdoor *</label><select id="attLabour" required></select>
+  <div class="formgrid"><div><label>Hajiri</label><select id="attDays"><option value="1">1 — Full day</option><option value="0.5">0.5 — Half day</option><option value="0">0 — Absent</option><option value="1.5">1.5 — One and half</option></select></div><div><label>Rate ₹ (auto-fill)</label><input id="attRate" type="number" min="0" required></div></div>
+  <label>Note</label><input id="attNote" placeholder="Extra work / overtime etc.">
+  <button class="primary" type="submit">Save Attendance</button>
+ </form></div>
+ <div class="panel"><div class="row"><h2>Attendance Records</h2><span class="chip" id="attTotal">0 entries</span></div><div id="attendanceList"></div></div>
+</section>
+
+<section id="expenses" class="view">
+ <h2>💸 Site Kharcha / Expenses</h2>
+ <div class="panel"><form onsubmit="saveTransaction(event,'expense')">
+  <div class="formgrid"><div><label>Date *</label><input id="expDate" type="date" required></div><div><label>Site *</label><select id="expSite" required></select></div></div>
+  <label>Expense Category *</label><select id="expCategory"><option>Labour Payment</option><option>Material</option><option>Transport</option><option>Machine / Tools</option><option>Food / Water</option><option>Other</option></select>
+  <label>Details *</label><input id="expDesc" required placeholder="Jaise: cement 20 bags">
+  <label>Amount ₹ *</label><input id="expAmount" type="number" min="1" required>
+  <button class="primary" type="submit">Save Kharcha</button>
+ </form></div>
+ <div class="panel"><h2>Kharcha Records</h2><div id="expenseList"></div></div>
+</section>
+
+<section id="income" class="view">
+ <h2>💰 Party Payment / Aamdani</h2>
+ <div class="panel"><form onsubmit="saveTransaction(event,'income')">
+  <div class="formgrid"><div><label>Date *</label><input id="incDate" type="date" required></div><div><label>Site *</label><select id="incSite" required></select></div></div>
+  <label>Payment Details *</label><input id="incDesc" required placeholder="Advance / slab payment / running bill">
+  <label>Amount Received ₹ *</label><input id="incAmount" type="number" min="1" required>
+  <label>Payment Mode</label><select id="incMode"><option>Cash</option><option>UPI</option><option>Bank</option><option>Cheque</option></select>
+  <button class="primary" type="submit">Save Aamdani</button>
+ </form></div>
+ <div class="panel"><h2>Aamdani Records</h2><div id="incomeList"></div></div>
+</section>
+
+<section id="reports" class="view">
+ <h2>📊 Reports / Hisaab</h2>
+ <div class="stats">
+  <div class="stat"><small>Attendance Days</small><strong id="repDays">0</strong></div>
+  <div class="stat"><small>Labour Wages</small><strong id="repWages">₹0</strong></div>
+  <div class="stat"><small>Advance Given</small><strong id="repAdvance">₹0</strong></div>
+  <div class="stat"><small>Party Payments</small><strong id="repIncome">₹0</strong></div>
+ </div>
+ <div class="panel"><h2>Site-wise Summary</h2><div id="siteSummary"></div></div>
+ <div class="panel"><h2>Backup & Data</h2><p class="muted">Backup JSON file download karke safe rakho. Import se isi app mein purana data restore kar sakte ho.</p>
+  <div class="actions"><button class="action" onclick="exportData()">⬇ Backup JSON<span>Data safe rakho</span></button><button class="action" onclick="document.getElementById('importFile').click()">⬆ Restore Backup<span>JSON file import</span></button></div>
+  <input id="importFile" type="file" accept=".json,application/json" hidden onchange="importData(event)">
+  <hr><button class="danger" onclick="clearAll()">Delete All Data</button>
+ </div>
+</section>
+</main>
+<nav>
+ <button class="active" data-view="dashboard" onclick="showView('dashboard')"><b>⌂</b>Home</button>
+ <button data-view="sites" onclick="showView('sites')"><b>🏠</b>Sites</button>
+ <button data-view="labour" onclick="showView('labour')"><b>👷</b>Labour</button>
+ <button data-view="attendance" onclick="showView('attendance')"><b>🗓️</b>Hajiri</button>
+ <button data-view="expenses" onclick="showView('expenses')"><b>💸</b>Kharcha</button>
+ <button data-view="income" onclick="showView('income')"><b>₹</b>Aamdani</button>
+ <button data-view="reports" onclick="showView('reports')"><b>▤</b>Report</button>
+</nav>
+<script>
+const KEY='sahuConstructionDataV1';
+let db={sites:[],labours:[],attendance:[],advances:[],transactions:[]};
+const $=id=>document.getElementById(id);
+const today=()=>new Date().toISOString().slice(0,10);
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const money=n=>'₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:2});
+const safe=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function load(){try{const v=JSON.parse(localStorage.getItem(KEY));if(v)db={...db,...v}}catch(e){}}
+function save(){localStorage.setItem(KEY,JSON.stringify(db));render()}
+function showView(id){document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id));document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===id));window.scrollTo(0,0);render()}
+function openForm(id){$(id).hidden=false;$(id).scrollIntoView({behavior:'smooth',block:'start'})}
+function closeForm(id){$(id).hidden=true}
+function fillSelect(id,items,placeholder,labelFn){const el=$(id),old=el.value;el.innerHTML=`<option value="">${placeholder}</option>`+items.map(x=>`<option value="${safe(x.id)}">${safe(labelFn(x))}</option>`).join('');if(items.some(x=>x.id===old))el.value=old}
+function siteName(id){return db.sites.find(x=>x.id===id)?.name||'Unknown site'}
+function labourName(id){return db.labours.find(x=>x.id===id)?.name||'Unknown labour'}
+function saveSite(e){e.preventDefault();const id=$('siteId').value||uid();const obj={id,name:$('siteName').value.trim(),location:$('siteLocation').value.trim(),contract:Number($('siteContract').value||0),notes:$('siteNotes').value.trim()};const i=db.sites.findIndex(x=>x.id===id);if(i>=0)db.sites[i]=obj;else db.sites.push(obj);e.target.reset();$('siteId').value='';closeForm('siteForm');save()}
+function editSite(id){const x=db.sites.find(x=>x.id===id);if(!x)return;$('siteId').value=x.id;$('siteName').value=x.name;$('siteLocation').value=x.location;$('siteContract').value=x.contract;$('siteNotes').value=x.notes;openForm('siteForm')}
+function saveLabour(e){e.preventDefault();const id=$('labourId').value||uid();const obj={id,name:$('labourName').value.trim(),phone:$('labourPhone').value.trim(),rate:Number($('labourRate').value||0),role:$('labourRole').value.trim()};const i=db.labours.findIndex(x=>x.id===id);if(i>=0)db.labours[i]=obj;else db.labours.push(obj);e.target.reset();$('labourId').value='';closeForm('labourForm');save()}
+function editLabour(id){const x=db.labours.find(x=>x.id===id);if(!x)return;$('labourId').value=x.id;$('labourName').value=x.name;$('labourPhone').value=x.phone;$('labourRate').value=x.rate;$('labourRole').value=x.role;openForm('labourForm')}
+function saveAdvance(e){e.preventDefault();db.advances.push({id:uid(),labourId:$('advanceLabour').value,amount:Number($('advanceAmount').value),date:$('advanceDate').value,note:$('advanceNote').value.trim()});e.target.reset();$('advanceDate').value=today();save()}
+function saveAttendance(e){e.preventDefault();const labour=db.labours.find(x=>x.id===$('attLabour').value);db.attendance.push({id:uid(),date:$('attDate').value,siteId:$('attSite').value,labourId:labour.id,days:Number($('attDays').value),rate:Number($('attRate').value||labour.rate),note:$('attNote').value.trim()});e.target.reset();$('attDate').value=today();$('attRate').value='';save()}
+function saveTransaction(e,type){e.preventDefault();const p=type==='expense'?'exp':'inc';db.transactions.push({id:uid(),type,date:$(p+'Date').value,siteId:$(p+'Site').value,category:type==='expense'?$('expCategory').value:$('incMode').value,desc:$(p+'Desc').value.trim(),amount:Number($(p+'Amount').value)});e.target.reset();$(p+'Date').value=today();save()}
+function deleteItem(collection,id){if(confirm('Is entry ko delete karna hai?')){db[collection]=db[collection].filter(x=>x.id!==id);save()}}
+function total(arr,fn=x=>x.amount||0){return arr.reduce((s,x)=>s+Number(fn(x)||0),0)}
+function render(){
+ $('todayLabel').textContent=new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'short',year:'numeric'});
+ ['attSite','expSite','incSite'].forEach(id=>fillSelect(id,db.sites,'Site select karo',x=>x.name));
+ ['attLabour','advanceLabour'].forEach(id=>fillSelect(id,db.labours,'Mazdoor select karo',x=>x.name+' — '+money(x.rate)+'/day'));
+ const income=total(db.transactions.filter(x=>x.type==='income')),expenses=total(db.transactions.filter(x=>x.type==='expense'))+total(db.attendance,x=>x.days*x.rate);
+ $('dashIncome').textContent=money(income);$('dashExpense').textContent=money(expenses);$('dashNet').textContent=money(income-expenses);$('dashNet').className=income-expenses<0?'red':'';$('dashSites').textContent=db.sites.length;
+ $('sitesList').innerHTML=db.sites.length?db.sites.map(s=>`<div class="listitem"><div class="row"><div><strong>${safe(s.name)}</strong><div class="muted">${safe(s.location||'Location not added')} • Contract ${money(s.contract)}</div><div class="muted">${safe(s.notes||'')}</div></div><button class="secondary smallbtn" onclick="editSite('${s.id}')">Edit</button></div></div>`).join(''):'<div class="empty">Abhi site nahi hai. Pehle + Add Site dabao.</div>';
+ $('labourList').innerHTML=db.labours.length?db.labours.map(l=>{const wage=total(db.attendance.filter(a=>a.labourId===l.id),a=>a.days*a.rate),adv=total(db.advances.filter(a=>a.labourId===l.id)),paid=total(db.transactions.filter(t=>t.type==='expense'&&t.category==='Labour Payment'&&t.desc.toLowerCase().includes(l.name.toLowerCase())));return `<div class="listitem"><div class="row"><div><strong>${safe(l.name)}</strong><div class="muted">${safe(l.role||'Labour')} • ${money(l.rate)}/day</div><div class="muted">Recorded wages: ${money(wage)} • Advance: ${money(adv)}</div></div><button class="secondary smallbtn" onclick="editLabour('${l.id}')">Edit</button></div></div>`}).join(''):'<div class="empty">Abhi mazdoor add nahi kiya.</div>';
+ $('advanceList').innerHTML=db.advances.length?db.advances.slice().reverse().map(a=>`<div class="listitem"><div class="row"><div><strong>${safe(labourName(a.labourId))} — ${money(a.amount)}</strong><div class="muted">${safe(a.date)} • ${safe(a.note)}</div></div><button class="danger" onclick="deleteItem('advances','${a.id}')">Delete</button></div></div>`).join(''):'<div class="empty">Advance record nahi hai.</div>';
+ $('attendanceList').innerHTML=db.attendance.length?db.attendance.slice().reverse().map(a=>`<div class="listitem"><div class="row"><div><strong>${safe(labourName(a.labourId))} — ${money(a.days*a.rate)}</strong><div class="muted">${safe(a.date)} • ${safe(siteName(a.siteId))}</div><div class="muted">${a.days} day × ${money(a.rate)} ${safe(a.note)}</div></div><button class="danger" onclick="deleteItem('attendance','${a.id}')">Delete</button></div></div>`).join(''):'<div class="empty">Hajiri record nahi hai.</div>';
+ $('attTotal').textContent=db.attendance.length+' entries';
+ const expensesList=db.transactions.filter(x=>x.type==='expense');
+ const incomeList=db.transactions.filter(x=>x.type==='income');
+ $('expenseList').innerHTML=expensesList.length?expensesList.slice().reverse().map(t=>transHTML(t)).join(''):'<div class="empty">Kharcha record nahi hai.</div>';
+ $('incomeList').innerHTML=incomeList.length?incomeList.slice().reverse().map(t=>transHTML(t)).join(''):'<div class="empty">Aamdani record nahi hai.</div>';
+ const recent=db.transactions.slice().reverse().slice(0,5);
+ $('recentList').innerHTML=recent.length?recent.map(t=>transHTML(t)).join(''):'<div class="empty">Abhi koi transaction nahi. Site add karke entry shuru karo.</div>';
+ $('repDays').textContent=total(db.attendance,a=>a.days);$('repWages').textContent=money(total(db.attendance,a=>a.days*a.rate));$('repAdvance').textContent=money(total(db.advances));$('repIncome').textContent=money(income);
+ $('siteSummary').innerHTML=db.sites.length?db.sites.map(s=>{const inc=total(db.transactions.filter(t=>t.siteId===s.id&&t.type==='income')),exp=total(db.transactions.filter(t=>t.siteId===s.id&&t.type==='expense')),w=total(db.attendance.filter(a=>a.siteId===s.id),a=>a.days*a.rate);return `<div class="listitem"><strong>${safe(s.name)}</strong><div class="row muted"><span>Aamdani</span><b class="green">${money(inc)}</b></div><div class="row muted"><span>Kharcha + Hajiri wages</span><b>${money(exp+w)}</b></div><div class="row"><span>Net</span><b class="${inc-exp-w<0?'red':'green'}">${money(inc-exp-w)}</b></div></div>`}).join(''):'<div class="empty">Site-wise report ke liye pehle site add karo.</div>';
+}
+function transHTML(t){return `<div class="listitem"><div class="row"><div><strong>${safe(t.desc)}</strong><div class="muted">${safe(t.date)} • ${safe(siteName(t.siteId))} • ${safe(t.category||'')}</div></div><div class="amount ${t.type==='income'?'green':'red'}">${t.type==='income'?'+':'−'}${money(t.amount)}<div style="text-align:right;margin-top:5px"><button class="danger" onclick="deleteItem('transactions','${t.id}')">Delete</button></div></div></div></div>`}
+function exportData(){const blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Sahu-Construction-Backup-'+today()+'.json';a.click();URL.revokeObjectURL(a.href)}
+function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!d.sites||!d.labours)throw Error();if(confirm('Current data replace karke backup restore karein?')){db={...db,...d};save();alert('Backup restore ho gaya.')}}catch(err){alert('Backup file sahi nahi hai.')}e.target.value=''};r.readAsText(f)}
+function clearAll(){if(confirm('Saara app data permanently delete karna hai? Backup ke bina wapas nahi milega.')&&confirm('Last confirmation: sach mein sab delete karein?')){db={sites:[],labours:[],attendance:[],advances:[],transactions:[]};save()}}
+$('attLabour').addEventListener('change',()=>{const l=db.labours.find(x=>x.id===$('attLabour').value);$('attRate').value=l?l.rate:''});
+load();
+['attDate','advanceDate','expDate','incDate'].forEach(id=>$(id).value=today());
+render();
+if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+</script>
+</body>
+</html>
