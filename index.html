@@ -48,6 +48,10 @@ hr{border:0;border-top:1px solid var(--line);margin:12px 0}
 .weekly-table{overflow-x:auto}.weekly-table table{width:100%;border-collapse:collapse;font-size:11px;min-width:530px}.weekly-table th,.weekly-table td{padding:9px 7px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}.weekly-table th:first-child,.weekly-table td:first-child{text-align:left}.weekly-table th{color:var(--muted);font-weight:750;background:#f8faf8}.weekly-table tr.today-row td{background:#f0f8f3;font-weight:750}
 .attendance-register{overflow-x:auto;margin-top:10px}.attendance-register table{width:100%;border-collapse:separate;border-spacing:0;font-size:11px;min-width:760px}.attendance-register th,.attendance-register td{padding:7px 6px;border:1px solid var(--line);text-align:center;white-space:nowrap}.attendance-register th{background:#f0f6f2;color:var(--green);font-weight:800}.attendance-register th:first-child,.attendance-register td:first-child{text-align:left;position:sticky;left:0;background:#fff;z-index:1;min-width:118px}.attendance-register th:first-child{background:#f0f6f2;z-index:2}.attendance-register .datehead{display:block;font-size:10px;color:var(--muted);font-weight:600;margin-top:3px}.attendance-register .daycell{min-width:48px}.attendance-register .markbtn{min-width:34px;border:1px solid var(--line);border-radius:7px;padding:5px 6px;font-size:11px;font-weight:850;background:#fff;cursor:pointer}.attendance-register .markbtn.present{background:#e4f5e9;color:#146c38;border-color:#9dd6b0}.attendance-register .markbtn.absent{background:#fff0ef;color:#a51f17;border-color:#ffc9c5}.attendance-register .paidcell{display:flex;align-items:center;justify-content:center;gap:4px}.attendance-register .paidcell input{width:17px;height:17px;accent-color:var(--green2)}.attendance-register .totalrow td{font-weight:850;background:#f8faf8}.attendance-register .totalrow td:first-child{background:#f8faf8}
 @media(max-width:380px){.weekly-chart{gap:3px}.weekbar-value,.weekbar-date,.weekbar-day{font-size:9px}}
+.step-label{font-size:12px;font-weight:850;letter-spacing:.08em;color:var(--green2)}
+#homeWorkflow .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#homeWorkflow .action{min-height:92px;text-align:left}
+@media(max-width:380px){#homeWorkflow .actions{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -57,6 +61,23 @@ hr{border:0;border-top:1px solid var(--line);margin:12px 0}
 <main>
 <section id="dashboard" class="view active">
  <div class="sectiontop"><div><h2>Namaste, Thekedaar Ji 👷</h2><div class="muted" id="todayLabel"></div></div><button class="secondary smallbtn" onclick="exportData()">⬇ Backup</button></div>
+ <div class="panel" style="border:2px solid var(--green2);background:#f1f8f4">
+  <div class="step-label">STEP 1 · SABSE PEHLE</div>
+  <h2 style="margin-top:6px">🏠 Apni Site Chuno</h2>
+  <p class="muted">Pehle jis site ka kaam kar rahe ho, woh select karo. Aage ki entries usi site ke liye hongi.</p>
+  <select id="homeSite" onchange="setActiveSite(this.value)" style="width:100%;font-size:17px;padding:14px;border-radius:12px"><option value="">Site select karo</option></select>
+  <div id="homeSiteStatus" class="muted" style="margin-top:9px">Site select karne ke baad agle steps khulenge.</div>
+  <button class="primary" style="width:100%;margin-top:12px" onclick="showView('sites');openForm('siteForm')">＋ Nayi Site Add Karo</button>
+ </div>
+ <div id="homeWorkflow" hidden>
+  <div class="panel"><div class="step-label">STEP 2 · KAAM KI ENTRY</div><h2>Ab kya karna hai?</h2><div class="actions">
+   <button class="action" onclick="openSiteFeature('attendance')">🗓️ Hajiri Bharo<span>Roz ki mazdoor attendance</span></button>
+   <button class="action" onclick="openSiteFeature('labour')">👷 Mazdoor / Advance<span>Worker add karo ya advance likho</span></button>
+   <button class="action" onclick="openSiteFeature('income')">💰 Malik se Advance<span>Site owner se mila paisa</span></button>
+   <button class="action" onclick="openSiteFeature('reports')">📊 Hafte ka Hisaab<span>Monday–Sunday alag register</span></button>
+   <button class="action" onclick="showView('sites')">🏠 Site Details<span>Site edit ya nayi site</span></button>
+  </div></div>
+ </div>
  <div class="stats">
   <div class="stat"><small>Malik se Advance</small><strong id="dashIncome">₹0</strong><span class="tag">Owner se mila</span></div>
   <div class="stat"><small>Labour Wages</small><strong id="dashWages">₹0</strong><span class="tag">Attendance-based</span></div>
@@ -170,6 +191,20 @@ const safe=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'
 function load(){try{const v=JSON.parse(localStorage.getItem(KEY));if(v)db={...db,...v}}catch(e){}}
 function save(){localStorage.setItem(KEY,JSON.stringify(db));render()}
 function showView(id){document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id));document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===id));window.scrollTo(0,0);render()}
+function setActiveSite(siteId){
+ if(siteId&&!db.sites.some(s=>s.id===siteId)){siteId=''}
+ db.activeSiteId=siteId||'';
+ ['attSite','incSite','advanceSite','reportSite'].forEach(id=>{const el=$(id);if(el&&siteId&&Array.from(el.options).some(o=>o.value===siteId))el.value=siteId});
+ save();
+}
+function openSiteFeature(id){
+ const siteId=db.activeSiteId;
+ if(!siteId||!db.sites.some(s=>s.id===siteId)){alert('Bhai, pehle Home par site select karo.');showView('dashboard');return}
+ showView(id);
+ ['attSite','incSite','advanceSite','reportSite'].forEach(k=>{if($(k))$(k).value=siteId});
+ if(id==='reports')renderWeeklyReport();
+}
+
 function openForm(id){$(id).hidden=false;$(id).scrollIntoView({behavior:'smooth',block:'start'})}
 function closeForm(id){$(id).hidden=true}
 function fillSelect(id,items,placeholder,labelFn){const el=$(id),old=el.value;el.innerHTML=`<option value="">${placeholder}</option>`+items.map(x=>`<option value="${safe(x.id)}">${safe(labelFn(x))}</option>`).join('');if(items.some(x=>x.id===old))el.value=old}
@@ -229,7 +264,10 @@ function render(){
  $('todayLabel').textContent=new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'short',year:'numeric'});
  ['attSite','incSite','advanceSite'].forEach(id=>fillSelect(id,db.sites,'Site select karo',x=>x.name));
  fillSelect('reportSite',db.sites,'Pehle site select karo',x=>x.name);
- if(!$('reportSite').value && db.sites.length) $('reportSite').value=db.sites[0].id;
+ fillSelect('homeSite',db.sites,'Site select karo',x=>x.name);
+ if(!db.sites.some(x=>x.id===db.activeSiteId))db.activeSiteId=db.sites[0]?.id||'';
+ if(db.activeSiteId){$('homeSite').value=db.activeSiteId;['attSite','incSite','advanceSite','reportSite'].forEach(id=>{if($(id)&&Array.from($(id).options).some(o=>o.value===db.activeSiteId))$(id).value=db.activeSiteId});$('homeWorkflow').hidden=false;$('homeSiteStatus').textContent='Selected site: '+siteName(db.activeSiteId)+' · Ab neeche se feature chuno.'}
+ else{$('homeSite').value='';$('homeWorkflow').hidden=true;$('homeSiteStatus').textContent='Pehle site add/select karo. Uske baad hi agle steps dikhenge.'}
  ['attLabour','advanceLabour'].forEach(id=>fillSelect(id,db.labours,'Mazdoor select karo',x=>x.name+' — '+money(x.rate)+'/day'));
  const income=total(db.transactions.filter(x=>x.type==='income')),wages=total(db.attendance,x=>x.days*x.rate),advance=total(db.advances);
  $('dashIncome').textContent=money(income);$('dashWages').textContent=money(wages);$('dashAdvance').textContent=money(advance);$('dashSites').textContent=db.sites.length;
