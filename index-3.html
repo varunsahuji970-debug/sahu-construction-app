@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#123b2b">
+<meta name="description" content="Sahu Construction business management app">
+<link rel="manifest" href="manifest.json">
+<title>Sahu Construction</title>
+<style>
+:root{--green:#123b2b;--green2:#1f6a4a;--mint:#e6f3ec;--bg:#f4f7f5;--ink:#17231d;--muted:#68766e;--line:#dce5df;--white:#fff;--red:#b42318;--orange:#9a5700}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);padding-bottom:78px}
+header{background:var(--green);color:#fff;padding:20px 16px 17px;border-radius:0 0 22px 22px}
+.brand{font-size:22px;font-weight:850;letter-spacing:.2px}.sub{font-size:12px;opacity:.8;margin-top:3px}
+.headrow{display:flex;align-items:center;justify-content:space-between;gap:10px}.pill{font-size:11px;border:1px solid #ffffff55;padding:5px 8px;border-radius:99px}
+main{max-width:760px;margin:auto;padding:14px}
+h2{font-size:17px;margin:8px 0 12px}.muted{color:var(--muted);font-size:12px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{background:white;border:1px solid var(--line);border-radius:15px;padding:13px}.stat small{display:block;color:var(--muted);font-size:12px}.stat strong{display:block;font-size:21px;margin-top:5px}.stat .tag{font-size:11px;color:var(--green2)}
+.panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;margin:12px 0}
+.actions{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.action{background:var(--mint);border:1px solid #d1e8da;border-radius:13px;padding:13px 10px;text-align:left;font-weight:750;color:var(--green);cursor:pointer}.action span{display:block;font-size:12px;font-weight:500;color:#456653;margin-top:4px}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;gap:2px;background:#fff;border-top:1px solid var(--line);padding:7px 4px calc(7px + env(safe-area-inset-bottom));z-index:5}
+nav button{border:0;background:transparent;color:var(--muted);font-size:10px;flex:1;padding:6px 1px;border-radius:10px;cursor:pointer}nav button b{display:block;font-size:19px;margin-bottom:2px}nav button.active{background:var(--mint);color:var(--green);font-weight:800}
+.view{display:none}.view.active{display:block}
+button.primary{background:var(--green2);color:#fff;border:0;border-radius:11px;padding:11px 14px;font-weight:750;cursor:pointer}
+button.secondary{background:#fff;color:var(--green);border:1px solid var(--line);border-radius:10px;padding:9px 11px;font-weight:650;cursor:pointer}
+button.danger{background:#fff1f0;color:var(--red);border:1px solid #ffd2cf;border-radius:9px;padding:7px 9px;cursor:pointer}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}.listitem{border-top:1px solid var(--line);padding:11px 0}.listitem:first-child{border-top:0}.listitem strong{font-size:14px}.amount{font-weight:800;white-space:nowrap}.green{color:var(--green2)}.red{color:var(--red)}
+label{display:block;font-size:12px;color:var(--muted);font-weight:700;margin:10px 0 5px}
+input,select,textarea{width:100%;border:1px solid #cbd8cf;border-radius:10px;padding:11px 10px;font:inherit;font-size:14px;background:#fff;color:var(--ink)}
+textarea{min-height:65px;resize:vertical}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}.full{grid-column:1/-1}
+form .primary{width:100%;margin-top:14px}
+.empty{padding:20px;text-align:center;color:var(--muted);font-size:13px}
+.sectiontop{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:6px 0 12px}
+.chip{display:inline-block;border-radius:99px;background:#eef2ef;color:#42534a;padding:4px 8px;font-size:11px}
+.note{background:#fff7e6;border:1px solid #f3dfb1;border-radius:12px;padding:11px;font-size:12px;color:#704b0a;line-height:1.5}
+.smallbtn{font-size:12px;padding:7px 9px!important}
+hr{border:0;border-top:1px solid var(--line);margin:12px 0}
+@media(min-width:600px){.stats{grid-template-columns:repeat(4,1fr)}.actions{grid-template-columns:repeat(4,1fr)}}
+
+.weekly-chart{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px;align-items:end;min-height:150px;padding:12px 4px 4px;border-bottom:1px solid var(--line)}
+.weekbar-wrap{min-width:0;text-align:center;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:145px;gap:5px}
+.weekbar-value{font-size:10px;font-weight:750;line-height:1.2;overflow-wrap:anywhere;color:var(--ink)}
+.weekbar{width:min(24px,70%);min-height:3px;border-radius:6px 6px 2px 2px;background:var(--green2)}
+.weekbar-date{font-size:10px;font-weight:750;line-height:1.2}
+.weekbar-day{font-size:10px;color:var(--muted);line-height:1.2}
+.weekly-legend{display:flex;gap:12px;flex-wrap:wrap;margin:10px 0 14px;font-size:11px;color:var(--muted)}
+.legend-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}.wage-dot{background:#1f6a4a}.income-dot{background:#2876c7}
+.weekly-table{overflow-x:auto}.weekly-table table{width:100%;border-collapse:collapse;font-size:11px;min-width:530px}.weekly-table th,.weekly-table td{padding:9px 7px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}.weekly-table th:first-child,.weekly-table td:first-child{text-align:left}.weekly-table th{color:var(--muted);font-weight:750;background:#f8faf8}.weekly-table tr.today-row td{background:#f0f8f3;font-weight:750}
+.attendance-register{overflow-x:auto;margin-top:10px}.attendance-register table{width:100%;border-collapse:separate;border-spacing:0;font-size:11px;min-width:760px}.attendance-register th,.attendance-register td{padding:7px 6px;border:1px solid var(--line);text-align:center;white-space:nowrap}.attendance-register th{background:#f0f6f2;color:var(--green);font-weight:800}.attendance-register th:first-child,.attendance-register td:first-child{text-align:left;position:sticky;left:0;background:#fff;z-index:1;min-width:118px}.attendance-register th:first-child{background:#f0f6f2;z-index:2}.attendance-register .datehead{display:block;font-size:10px;color:var(--muted);font-weight:600;margin-top:3px}.attendance-register .daycell{min-width:48px}.attendance-register .markbtn{min-width:34px;border:1px solid var(--line);border-radius:7px;padding:5px 6px;font-size:11px;font-weight:850;background:#fff;cursor:pointer}.attendance-register .markbtn.present{background:#e4f5e9;color:#146c38;border-color:#9dd6b0}.attendance-register .markbtn.absent{background:#fff0ef;color:#a51f17;border-color:#ffc9c5}.attendance-register .paidcell{display:flex;align-items:center;justify-content:center;gap:4px}.attendance-register .paidcell input{width:17px;height:17px;accent-color:var(--green2)}.attendance-register .totalrow td{font-weight:850;background:#f8faf8}.attendance-register .totalrow td:first-child{background:#f8faf8}
+@media(max-width:380px){.weekly-chart{gap:3px}.weekbar-value,.weekbar-date,.weekbar-day{font-size:9px}}
+.step-label{font-size:12px;font-weight:850;letter-spacing:.08em;color:var(--green2)}
+.site-choice{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left;padding:13px 11px;margin-top:8px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);cursor:pointer}.site-choice strong{display:block;font-size:14px}.site-choice small{display:block;color:var(--muted);font-size:11px;margin-top:4px}.site-choice b{font-size:11px;color:var(--green2);white-space:nowrap}.site-choice.chosen{border:2px solid var(--green2);background:#e6f3ec}#homeWorkflow .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#homeWorkflow .action{min-height:92px;text-align:left}
+@media(max-width:380px){#homeWorkflow .actions{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+ <div class="headrow"><div><div class="brand">🏗️ SAHU CONSTRUCTION</div><div class="sub">Business Hisab • Labour • Site Management</div></div><span class="pill">FREE PROTOTYPE</span></div>
+</header>
+<main>
+<section id="dashboard" class="view active">
+ <div class="sectiontop"><div><h2>Namaste, Thekedaar Ji 👷</h2><div class="muted" id="todayLabel"></div></div><button class="secondary smallbtn" onclick="exportData()">⬇ Backup</button></div>
+ <div class="panel" style="border:2px solid var(--green2);background:#f1f8f4">
+  <div class="step-label">STEP 1 · SITE CHUNO</div>
+  <h2 style="margin-top:6px">🏗️ Chalu Sites</h2>
+  <p class="muted">Jis site ka hisaab karna hai, us site par tap karo. Pehli baar aaye ho to pehle nayi site add karo.</p>
+  <div id="activeSitesList"></div>
+  <button class="primary" style="width:100%;margin-top:12px" onclick="showView('sites');openForm('siteForm')">＋ Nayi Site Add Karo</button>
+ </div>
+ <div id="homeWorkflow" hidden>
+  <div class="panel" style="border:2px solid var(--green2)"><div class="row"><div><div class="step-label">SELECTED SITE</div><h2 id="selectedSiteTitle" style="margin:5px 0">Site</h2></div><button class="secondary smallbtn" onclick="clearActiveSite()">Site Badlo</button></div>
+   <div class="step-label" style="margin:12px 0 8px">STEP 2 · FEATURE CHUNO</div>
+   <div class="actions">
+    <button class="action" onclick="openSiteFeature('attendance')">🗓️ Hajiri Bharo<span>Roz ki mazdoor attendance</span></button>
+    <button class="action" onclick="openSiteFeature('labour')">👷 Mazdoor / Advance<span>Worker aur labour advance</span></button>
+    <button class="action" onclick="openSiteFeature('income')">💰 Malik se Advance<span>Owner se mila paisa</span></button>
+    <button class="action" onclick="openSiteFeature('reports')">📊 Hafte ka Hisaab<span>Monday–Sunday alag register</span></button>
+    <button class="action" onclick="showView('sites')">🏠 Site Details<span>Site edit ya nayi site</span></button>
+   </div>
+  </div>
+  <div class="stats">
+   <div class="stat"><small>Malik se Advance</small><strong id="dashIncome">₹0</strong></div>
+   <div class="stat"><small>Labour Wages</small><strong id="dashWages">₹0</strong></div>
+   <div class="stat"><small>Labour Advance</small><strong id="dashAdvance">₹0</strong></div>
+  </div>
+ </div>
+ <div class="note">📌 Data isi phone/browser mein save hota hai. Har hafte Backup JSON download kar lena.</div>
+</section>
+
+<section id="sites" class="view">
+ <div class="sectiontop"><h2>🏠 Sites / Projects</h2><button class="primary" onclick="openForm('siteForm')">+ Add Site</button></div>
+ <form id="siteForm" class="panel" hidden onsubmit="saveSite(event)">
+  <h2>Nayi Site Add Karo</h2><input type="hidden" id="siteId">
+  <label>Site / Party Name *</label><input id="siteName" required placeholder="Jaise: Sharma Ji ka ghar">
+  <div class="formgrid"><div><label>Location</label><input id="siteLocation" placeholder="Gaon / area"></div><div><label>Contract Amount ₹</label><input id="siteContract" type="number" min="0" placeholder="0"></div></div>
+  <label>Notes</label><textarea id="siteNotes" placeholder="Kaam ki details"></textarea>
+  <button class="primary" type="submit">Save Site</button> <button class="secondary" type="button" onclick="closeForm('siteForm')">Cancel</button>
+ </form>
+ <div class="panel" id="sitesList"></div>
+</section>
+
+<section id="labour" class="view">
+ <div class="sectiontop"><h2>👷 Labour / Mazdoor</h2><button class="primary" onclick="openForm('labourForm')">+ Add Labour</button></div>
+ <form id="labourForm" class="panel" hidden onsubmit="saveLabour(event)">
+  <h2>Mazdoor Details</h2><input type="hidden" id="labourId">
+  <label>Mazdoor ka Naam *</label><input id="labourName" required placeholder="Poora naam">
+  <div class="formgrid"><div><label>Mobile (optional)</label><input id="labourPhone" type="tel" placeholder="Mobile number"></div><div><label>Daily Rate ₹ *</label><input id="labourRate" type="number" min="0" required placeholder="500"></div></div>
+  <label>Kaam / Role</label><input id="labourRole" placeholder="Mistri / Helper / Steel / Shuttering">
+  <button class="primary" type="submit">Save Labour</button> <button class="secondary" type="button" onclick="closeForm('labourForm')">Cancel</button>
+ </form>
+ <div class="panel" id="labourList"></div>
+ <div class="panel"><h2>💵 Advance Dena / Record Karna</h2><form onsubmit="saveAdvance(event)">
+  <div class="formgrid"><div><label>Site *</label><select id="advanceSite" required></select></div><div><label>Mazdoor *</label><select id="advanceLabour" required></select></div></div>
+  <div class="formgrid"><div><label>Amount ₹</label><input id="advanceAmount" type="number" min="1" required></div><div><label>Date</label><input id="advanceDate" type="date" required></div></div>
+  <label>Reason / Note</label><input id="advanceNote" placeholder="Advance / ghar kharcha">
+  <button class="primary" type="submit">Save Advance</button>
+ </form><div id="advanceList"></div></div>
+</section>
+
+<section id="attendance" class="view">
+ <h2>🗓️ Daily Attendance / Hajiri</h2>
+ <div class="panel"><form onsubmit="saveAttendance(event)">
+  <div class="formgrid"><div><label>Date *</label><input id="attDate" type="date" required></div><div><label>Site *</label><select id="attSite" required></select></div></div>
+  <label>Mazdoor *</label><select id="attLabour" required></select>
+  <div class="formgrid"><div><label>Hajiri</label><select id="attDays"><option value="1">1 — Full day</option><option value="0.5">0.5 — Half day</option><option value="0">0 — Absent</option><option value="1.5">1.5 — One and half</option></select></div><div><label>Rate ₹ (auto-fill)</label><input id="attRate" type="number" min="0" required></div></div>
+  <label>Note</label><input id="attNote" placeholder="Extra work / overtime etc.">
+  <button class="primary" type="submit">Save Attendance</button>
+ </form></div>
+ <div class="panel"><div class="row"><h2>Attendance Records</h2><span class="chip" id="attTotal">0 entries</span></div><div id="attendanceList"></div></div>
+</section>
+
+<section id="income" class="view">
+ <h2>💰 Malik se Mila Advance</h2>
+ <div class="panel"><form onsubmit="saveIncome(event)">
+  <div class="formgrid"><div><label>Date *</label><input id="incDate" type="date" required></div><div><label>Site *</label><select id="incSite" required></select></div></div>
+  <label>Malik se mili Rakam ₹ *</label><input id="incAmount" type="number" min="1" required>
+  <label>Note (optional)</label><input id="incDesc" placeholder="Jaise: slab ke liye advance">
+  <button class="primary" type="submit">Save Malik Advance</button>
+ </form></div>
+ <div class="panel"><h2>Malik se Mile Advance ke Records</h2><div id="incomeList"></div></div>
+</section>
+
+<section id="reports" class="view">
+ <h2>📊 Site-wise Reports / Hisaab</h2>
+ <div class="panel" style="border:2px solid var(--green2)"><label for="reportSite">1. Sabse pehle Site select karo *</label><select id="reportSite" required onchange="render()"><option value="">Pehle site select karo</option></select><div class="muted" style="margin-top:7px">Har site ka report alag dikhega. Doosri site ka hisaab ismein mix nahi hoga.</div><label for="reportWeekDate" style="display:block;margin-top:12px">2. Har hafte ka alag register (Monday–Sunday)</label><div class="actions" style="margin-top:8px"><button type="button" class="secondary" onclick="shiftReportWeek(-7)">← Pichhla hafta</button><button type="button" class="secondary" onclick="setCurrentReportWeek()">Aaj ka hafta</button><button type="button" class="secondary" onclick="shiftReportWeek(7)">Agla hafta →</button></div><label for="reportWeekDate" style="display:block;margin-top:10px">Ya tareekh chun kar us hafte ka record kholo</label><input id="reportWeekDate" type="date" onchange="render()"><div id="selectedWeekLabel" class="chip" style="display:inline-block;margin-top:8px">Selected week</div><div class="muted" style="margin-top:6px">Har Monday naya hafta khud select hota hai. Purane hafte ka record isi tarah alag rahega; pichhla hafta kholne par usi ki hajiri aur payment status dikhega. Naya hafta purane record ko delete nahi karega.</div></div>
+ <div class="stats">
+  <div class="stat"><small>Attendance Days</small><strong id="repDays">0</strong></div>
+  <div class="stat"><small>Labour Wages</small><strong id="repWages">₹0</strong></div>
+  <div class="stat"><small>Site Advance Given</small><strong id="repAdvance">₹0</strong></div>
+  <div class="stat"><small>Malik se Advance</small><strong id="repIncome">₹0</strong></div>
+ </div>
+ <div class="panel"><div class="sectiontop"><div><h2>📋 Mazdoor Hajiri Register (Monday–Sunday)</h2><div class="muted">Pehle site select karo. Har mazdoor ke saamne P/A dabakar hajiri mark karo; aakhri column mein payment tick karo.</div></div><span class="chip">Mon – Sun</span></div>
+  <div id="attendanceRegister" class="attendance-register"></div>
+  <p class="muted">P = Present • A = Absent. P/A par tap karke badal sakte ho. Present mark karne par default 1 din aur mazdoor ka daily rate lagega. Half-day/extra adjustment ke liye Daily Hajiri section use karo.</p>
+ </div>
+ <div class="panel"><div class="sectiontop"><div><h2>📅 Weekly Site Hisab (Monday–Sunday)</h2><div class="muted">Selected site ka roz ka wages, labour advance aur malik se mila advance</div></div><span class="chip">Mon – Sun</span></div>
+  <div id="weeklyChart" class="weekly-chart" aria-label="Weekly wage chart"></div>
+  <div class="weekly-legend"><span><i class="legend-dot wage-dot"></i> Labour wages</span><span><i class="legend-dot income-dot"></i> Malik se Advance</span></div>
+  <div id="weeklyTable" class="weekly-table"></div>
+ </div>
+ <div class="panel"><h2>Site-wise Summary</h2><div id="siteSummary"></div></div>
+ <div class="panel"><h2>Backup & Data</h2><p class="muted">Backup JSON file download karke safe rakho. Import se isi app mein purana data restore kar sakte ho.</p>
+  <div class="actions"><button class="action" onclick="exportData()">⬇ Backup JSON<span>Data safe rakho</span></button><button class="action" onclick="document.getElementById('importFile').click()">⬆ Restore Backup<span>JSON file import</span></button></div>
+  <input id="importFile" type="file" accept=".json,application/json" hidden onchange="importData(event)">
+  <hr><button class="danger" onclick="clearAll()">Delete All Data</button>
+ </div>
+</section>
+</main>
+<nav>
+ <button class="active" data-view="dashboard" onclick="showView('dashboard')"><b>⌂</b>Home</button>
+ <button data-view="sites" onclick="showView('sites')"><b>🏠</b>Sites</button>
+ <button data-view="labour" onclick="showView('labour')"><b>👷</b>Labour</button>
+ <button data-view="attendance" onclick="showView('attendance')"><b>🗓️</b>Hajiri</button>
+ <button data-view="income" onclick="showView('income')"><b>₹</b>Malik Advance</button>
+ <button data-view="reports" onclick="showView('reports')"><b>▤</b>Report</button>
+</nav>
+<script>
+const KEY='sahuConstructionDataV1';
+let db={sites:[],labours:[],attendance:[],advances:[],transactions:[],weeklyPayments:{}};
+const $=id=>document.getElementById(id);
+const today=()=>new Date().toISOString().slice(0,10);
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const money=n=>'₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:2});
+const safe=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function load(){try{const v=JSON.parse(localStorage.getItem(KEY));if(v)db={...db,...v}}catch(e){}}
+function save(){localStorage.setItem(KEY,JSON.stringify(db));render()}
+function showView(id){if(['labour','attendance','income','reports'].includes(id)&&(!db.activeSiteId||!db.sites.some(s=>s.id===db.activeSiteId))){alert('Bhai, pehle Home par chalu site select karo.');id='dashboard'}document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id));document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===id));window.scrollTo(0,0);render()}
+function clearActiveSite(){db.activeSiteId='';save();window.scrollTo(0,0)}
+function setActiveSite(siteId){
+ if(siteId&&!db.sites.some(s=>s.id===siteId)){siteId=''}
+ db.activeSiteId=siteId||'';
+ ['attSite','incSite','advanceSite','reportSite'].forEach(id=>{const el=$(id);if(el&&siteId&&Array.from(el.options).some(o=>o.value===siteId))el.value=siteId});
+ save();
+ document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id==='dashboard'));document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.view==='dashboard'));window.scrollTo(0,0);
+}
+function openSiteFeature(id){
+ const siteId=db.activeSiteId;
+ if(!siteId||!db.sites.some(s=>s.id===siteId)){alert('Bhai, pehle Home par site select karo.');showView('dashboard');return}
+ showView(id);
+ ['attSite','incSite','advanceSite','reportSite'].forEach(k=>{if($(k))$(k).value=siteId});
+ if(id==='reports')renderWeeklyReport();
+}
+
+function openForm(id){$(id).hidden=false;$(id).scrollIntoView({behavior:'smooth',block:'start'})}
+function closeForm(id){$(id).hidden=true}
+function fillSelect(id,items,placeholder,labelFn){const el=$(id),old=el.value;el.innerHTML=`<option value="">${placeholder}</option>`+items.map(x=>`<option value="${safe(x.id)}">${safe(labelFn(x))}</option>`).join('');if(items.some(x=>x.id===old))el.value=old}
+function siteName(id){return db.sites.find(x=>x.id===id)?.name||'Unknown site'}
+function labourName(id){return db.labours.find(x=>x.id===id)?.name||'Unknown labour'}
+function saveSite(e){e.preventDefault();const editing=!!$('siteId').value;const id=$('siteId').value||uid();const obj={id,name:$('siteName').value.trim(),location:$('siteLocation').value.trim(),contract:Number($('siteContract').value||0),notes:$('siteNotes').value.trim()};const i=db.sites.findIndex(x=>x.id===id);if(i>=0)db.sites[i]=obj;else db.sites.push(obj);if(!editing||!db.activeSiteId)db.activeSiteId=id;e.target.reset();$('siteId').value='';closeForm('siteForm');save();document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id==='dashboard'));document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.view==='dashboard'));window.scrollTo(0,0)}
+function editSite(id){const x=db.sites.find(x=>x.id===id);if(!x)return;$('siteId').value=x.id;$('siteName').value=x.name;$('siteLocation').value=x.location;$('siteContract').value=x.contract;$('siteNotes').value=x.notes;openForm('siteForm')}
+function saveLabour(e){e.preventDefault();const id=$('labourId').value||uid();const obj={id,name:$('labourName').value.trim(),phone:$('labourPhone').value.trim(),rate:Number($('labourRate').value||0),role:$('labourRole').value.trim()};const i=db.labours.findIndex(x=>x.id===id);if(i>=0)db.labours[i]=obj;else db.labours.push(obj);e.target.reset();$('labourId').value='';closeForm('labourForm');save()}
+function editLabour(id){const x=db.labours.find(x=>x.id===id);if(!x)return;$('labourId').value=x.id;$('labourName').value=x.name;$('labourPhone').value=x.phone;$('labourRate').value=x.rate;$('labourRole').value=x.role;openForm('labourForm')}
+function saveAdvance(e){e.preventDefault();db.advances.push({id:uid(),siteId:$('advanceSite').value,labourId:$('advanceLabour').value,amount:Number($('advanceAmount').value),date:$('advanceDate').value,note:$('advanceNote').value.trim()});e.target.reset();$('advanceDate').value=today();save()}
+function saveAttendance(e){e.preventDefault();const labour=db.labours.find(x=>x.id===$('attLabour').value);db.attendance.push({id:uid(),date:$('attDate').value,siteId:$('attSite').value,labourId:labour.id,days:Number($('attDays').value),rate:Number($('attRate').value||labour.rate),note:$('attNote').value.trim()});e.target.reset();$('attDate').value=today();$('attRate').value='';save()}
+function saveIncome(e){e.preventDefault();db.transactions.push({id:uid(),type:'income',date:$('incDate').value,siteId:$('incSite').value,category:'Malik se Advance',desc:$('incDesc').value.trim()||'Malik se advance',amount:Number($('incAmount').value)});e.target.reset();$('incDate').value=today();save()}
+function deleteItem(collection,id){if(confirm('Is entry ko delete karna hai?')){db[collection]=db[collection].filter(x=>x.id!==id);save()}}
+function total(arr,fn=x=>x.amount||0){return arr.reduce((s,x)=>s+Number(fn(x)||0),0)}
+function localDateKey(d){const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${day}`}
+function dateLabel(key,opts={day:'2-digit',month:'short'}){const d=new Date(key+'T12:00:00');return d.toLocaleDateString('en-IN',opts)}
+function toggleWeekAttendance(siteId,labourId,date){
+ const existing=db.attendance.filter(a=>a.siteId===siteId&&a.labourId===labourId&&a.date===date&&Number(a.days)>0);
+ if(existing.length){db.attendance=db.attendance.filter(a=>!(a.siteId===siteId&&a.labourId===labourId&&a.date===date));}
+ else {const labour=db.labours.find(l=>l.id===labourId);if(!labour)return;db.attendance=db.attendance.filter(a=>!(a.siteId===siteId&&a.labourId===labourId&&a.date===date));db.attendance.push({id:uid(),date,siteId,labourId,days:1,rate:Number(labour.rate||0),note:'Weekly register'});}
+ save();
+}
+function setWeeklyPaid(siteId,weekStart,labourId,paid){
+ if(!db.weeklyPayments)db.weeklyPayments={};const key=`${siteId}|${weekStart}|${labourId}`;if(paid)db.weeklyPayments[key]=true;else delete db.weeklyPayments[key];save();
+}
+function shiftReportWeek(offset){
+ const input=$('reportWeekDate');const base=new Date((input.value||today())+'T12:00:00');base.setDate(base.getDate()+offset);input.value=localDateKey(base);render();
+}
+function setCurrentReportWeek(){ $('reportWeekDate').value=today(); render(); }
+function renderWeeklyReport(){
+ const siteId=$('reportSite').value;
+ if(!siteId){
+  $('weeklyChart').innerHTML='<div class="empty">Pehle upar Site select karo. Phir sirf usi site ka Monday–Sunday report dikhega.</div>';
+  $('weeklyTable').innerHTML='';$('attendanceRegister').innerHTML='<div class="empty">Hajiri register dekhne ke liye pehle site select karo.</div>';$('siteSummary').innerHTML='<div class="empty">Report dekhne ke liye pehle site select karo.</div>';
+  ['repDays'].forEach(id=>$(id).textContent='0');['repWages','repAdvance','repIncome'].forEach(id=>$(id).textContent=money(0));return;
+ }
+ const days=[];const now=new Date();now.setHours(12,0,0,0);
+ const selectedDate=$('reportWeekDate').value||localDateKey(now);const anchor=new Date(selectedDate+'T12:00:00');
+ const monday=new Date(anchor);monday.setDate(anchor.getDate()-((anchor.getDay()+6)%7));
+ for(let i=0;i<7;i++){const d=new Date(monday);d.setDate(monday.getDate()+i);const key=localDateKey(d);const at=db.attendance.filter(a=>a.siteId===siteId&&a.date===key);const tx=db.transactions.filter(t=>t.siteId===siteId&&t.date===key);const adv=db.advances.filter(a=>a.siteId===siteId&&a.date===key);days.push({key,day:d.toLocaleDateString('en-IN',{weekday:'long'}),shortDay:d.toLocaleDateString('en-IN',{weekday:'short'}),date:dateLabel(key,{day:'2-digit',month:'short'}),hajiri:total(at,a=>a.days),wages:total(at,a=>a.days*a.rate),advance:total(adv),income:total(tx.filter(t=>t.type==='income'))})}
+ const weekStart=days[0].key;const weekEnd=days[6].key;const weekLabel=dateLabel(weekStart,{day:'2-digit',month:'short',year:'numeric'})+' – '+dateLabel(weekEnd,{day:'2-digit',month:'short',year:'numeric'});$('selectedWeekLabel').textContent='Selected week: '+weekLabel;document.querySelectorAll('#reports .sectiontop .chip').forEach(el=>el.textContent=weekLabel);
+ const workers=db.labours.slice().sort((a,b)=>a.name.localeCompare(b.name,'en'));
+ const attendanceFor=(labourId,key)=>db.attendance.filter(a=>a.siteId===siteId&&a.labourId===labourId&&a.date===key&&Number(a.days)>0);
+ const payKey=labourId=>`${siteId}|${weekStart}|${labourId}`;
+ const workerStats=workers.map(l=>{const perDay=days.map(d=>{const entries=attendanceFor(l.id,d.key);return {days:total(entries,a=>a.days),amount:total(entries,a=>a.days*a.rate),present:entries.length>0}});return {labour:l,perDay,totalDays:total(perDay,x=>x.days),amount:total(perDay,x=>x.amount),paid:!!db.weeklyPayments?.[payKey(l.id)]}});
+ const dayTotals=days.map((d,i)=>({days:total(workerStats,w=>w.perDay[i].days),amount:total(workerStats,w=>w.perDay[i].amount)}));
+ $('attendanceRegister').innerHTML=workers.length?`<table><thead><tr><th>Mazdoor / Worker</th>${days.map(d=>`<th class="daycell">${safe(d.date)}<span class="datehead">${safe(d.day)}</span></th>`).join('')}<th>Total Days</th><th>Total Amount</th><th>Paid?</th></tr></thead><tbody>${workerStats.map(w=>`<tr><td><strong>${safe(w.labour.name)}</strong><span class="datehead">${money(w.labour.rate)}/day</span></td>${w.perDay.map((v,i)=>`<td><button class="markbtn ${v.present?'present':'absent'}" aria-label="${safe(w.labour.name)} ${safe(days[i].day)} ${v.present?'Present':'Absent'}" onclick="toggleWeekAttendance('${safe(siteId)}','${safe(w.labour.id)}','${safe(days[i].key)}')">${v.present?(v.days===0.5?'P½':'P'):'A'}</button></td>`).join('')}<td>${w.totalDays}</td><td>${money(w.amount)}</td><td><label class="paidcell"><input type="checkbox" ${w.paid?'checked':''} aria-label="Payment paid for ${safe(w.labour.name)}" onchange="setWeeklyPaid('${safe(siteId)}','${safe(weekStart)}','${safe(w.labour.id)}',this.checked)"><span>${w.paid?'Paid':'Unpaid'}</span></label></td></tr>`).join('')}<tr class="totalrow"><td>कुल</td>${dayTotals.map(t=>`<td>${t.days? t.days+' d':'—'}</td>`).join('')}<td>${total(workerStats,w=>w.totalDays)}</td><td>${money(total(workerStats,w=>w.amount))}</td><td>—</td></tr></tbody></table>`:'<div class="empty">Pehle Labour section mein mazdoor add karo. Phir yahan site-wise Monday–Sunday register dikhega.</div>';
+ const max=Math.max(1,...days.map(d=>d.wages));
+ $('weeklyChart').innerHTML=days.map(d=>{const h=d.wages?Math.max(4,Math.round(d.wages/max*92)):3;return `<div class="weekbar-wrap" title="${safe(dateLabel(d.key,{weekday:'long',day:'numeric',month:'long',year:'numeric'}))}: wages ${money(d.wages)}"><div class="weekbar-value">${d.wages?money(d.wages):'—'}</div><div class="weekbar" style="height:${h}px"></div><div class="weekbar-date">${safe(d.date)}</div><div class="weekbar-day">${safe(d.shortDay)}</div></div>`}).join('');
+ const sumH=total(days,d=>d.hajiri),sumW=total(days,d=>d.wages),sumA=total(days,d=>d.advance),sumI=total(days,d=>d.income);
+ $('weeklyTable').innerHTML=`<table><thead><tr><th>दिन / तारीख</th><th>हाजिरी</th><th>मजदूरी</th><th>लेबर को एडवांस</th><th>मालिक से मिला एडवांस</th></tr></thead><tbody>${days.map(d=>`<tr class="${d.key===localDateKey(now)?'today-row':''}"><td>${safe(d.day)}<br><span class="muted">${safe(dateLabel(d.key,{day:'2-digit',month:'short',year:'numeric'}))}</span></td><td>${d.hajiri}</td><td>${money(d.wages)}</td><td>${money(d.advance)}</td><td class="green">${money(d.income)}</td></tr>`).join('')}<tr><th>कुल (Mon–Sun)</th><th>${sumH}</th><th>${money(sumW)}</th><th>${money(sumA)}</th><th class="green">${money(sumI)}</th></tr></tbody></table><p class="muted">जिस दिन मालिक से एडवांस की एंट्री नहीं है, उस दिन ₹0 दिखेगा। केवल चुनी हुई साइट का हिसाब शामिल है।</p>`;
+ $('repDays').textContent=sumH;$('repWages').textContent=money(sumW);$('repAdvance').textContent=money(sumA);$('repIncome').textContent=money(sumI);
+ const s=db.sites.find(x=>x.id===siteId);const siteInc=total(db.transactions.filter(t=>t.siteId===siteId&&t.type==='income'));const siteW=total(db.attendance.filter(a=>a.siteId===siteId),a=>a.days*a.rate);const siteAdv=total(db.advances.filter(a=>a.siteId===siteId));
+ $('siteSummary').innerHTML=`<div class="listitem"><strong>${safe(s?.name||'Selected Site')}</strong><div class="muted">${safe(s?.location||'Location not added')}</div><div class="row muted"><span>Malik se mila advance</span><b class="green">${money(siteInc)}</b></div><div class="row muted"><span>Hajiri / Mazdoori</span><b>${money(siteW)}</b></div><div class="row muted"><span>Labour ko diya advance</span><b>${money(siteAdv)}</b></div></div><p class="muted">Har entry mein sahi site select karna, taaki doosri site ka hisaab mix na ho.</p>`;
+}
+function render(){
+ $('todayLabel').textContent=new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'short',year:'numeric'});
+ ['attSite','incSite','advanceSite'].forEach(id=>fillSelect(id,db.sites,'Site select karo',x=>x.name));
+ fillSelect('reportSite',db.sites,'Pehle site select karo',x=>x.name);
+ if(!db.sites.some(x=>x.id===db.activeSiteId))db.activeSiteId='';
+ $('activeSitesList').innerHTML=db.sites.length?db.sites.map(x=>`<button class="site-choice ${x.id===db.activeSiteId?'chosen':''}" onclick="setActiveSite('${x.id}')"><span><strong>🏠 ${safe(x.name)}</strong><small>${safe(x.location||'Location add nahi hai')}</small></span><b>${x.id===db.activeSiteId?'✓ Selected':'Hisaab kholo →'}</b></button>`).join(''):'<div class="empty">Abhi koi site add nahi hai. Shuru karne ke liye neeche “Nayi Site Add Karo” dabao.</div>';
+ if(db.activeSiteId){$('homeWorkflow').hidden=false;$('selectedSiteTitle').textContent=siteName(db.activeSiteId);['attSite','incSite','advanceSite','reportSite'].forEach(id=>{if($(id)&&Array.from($(id).options).some(o=>o.value===db.activeSiteId))$(id).value=db.activeSiteId})}
+ else{$('homeWorkflow').hidden=true}
+ ['attLabour','advanceLabour'].forEach(id=>fillSelect(id,db.labours,'Mazdoor select karo',x=>x.name+' — '+money(x.rate)+'/day'));
+ const income=total(db.transactions.filter(x=>x.type==='income')),wages=total(db.attendance,x=>x.days*x.rate),advance=total(db.advances);
+ $('dashIncome').textContent=money(income);$('dashWages').textContent=money(wages);$('dashAdvance').textContent=money(advance);$('dashSites').textContent=db.sites.length;
+ $('sitesList').innerHTML=db.sites.length?db.sites.map(s=>`<div class="listitem"><div class="row"><div><strong>${safe(s.name)}</strong><div class="muted">${safe(s.location||'Location not added')} • Contract ${money(s.contract)}</div><div class="muted">${safe(s.notes||'')}</div></div><button class="secondary smallbtn" onclick="editSite('${s.id}')">Edit</button></div></div>`).join(''):'<div class="empty">Abhi site nahi hai. Pehle + Add Site dabao.</div>';
+ $('labourList').innerHTML=db.labours.length?db.labours.map(l=>{const wage=total(db.attendance.filter(a=>a.labourId===l.id),a=>a.days*a.rate),adv=total(db.advances.filter(a=>a.labourId===l.id));return `<div class="listitem"><div class="row"><div><strong>${safe(l.name)}</strong><div class="muted">${safe(l.role||'Labour')} • ${money(l.rate)}/day</div><div class="muted">Recorded wages: ${money(wage)} • Advance: ${money(adv)}</div></div><button class="secondary smallbtn" onclick="editLabour('${l.id}')">Edit</button></div></div>`}).join(''):'<div class="empty">Abhi mazdoor add nahi kiya.</div>';
+ $('advanceList').innerHTML=db.advances.length?db.advances.slice().reverse().map(a=>`<div class="listitem"><div class="row"><div><strong>${safe(labourName(a.labourId))} — ${money(a.amount)}</strong><div class="muted">${safe(a.date)} • ${safe(siteName(a.siteId))} • ${safe(a.note)}</div></div><button class="danger" onclick="deleteItem('advances','${a.id}')">Delete</button></div></div>`).join(''):'<div class="empty">Advance record nahi hai.</div>';
+ $('attendanceList').innerHTML=db.attendance.length?db.attendance.slice().reverse().map(a=>`<div class="listitem"><div class="row"><div><strong>${safe(labourName(a.labourId))} — ${money(a.days*a.rate)}</strong><div class="muted">${safe(a.date)} • ${safe(siteName(a.siteId))}</div><div class="muted">${a.days} day × ${money(a.rate)} ${safe(a.note)}</div></div><button class="danger" onclick="deleteItem('attendance','${a.id}')">Delete</button></div></div>`).join(''):'<div class="empty">Hajiri record nahi hai.</div>';
+ $('attTotal').textContent=db.attendance.length+' entries';
+ const incomeList=db.transactions.filter(x=>x.type==='income');
+ $('incomeList').innerHTML=incomeList.length?incomeList.slice().reverse().map(t=>transHTML(t)).join(''):'<div class="empty">Malik se advance ka record nahi hai.</div>';
+ const recent=db.transactions.filter(t=>t.type==='income').slice().reverse().slice(0,5);
+ $('recentList').innerHTML=recent.length?recent.map(t=>transHTML(t)).join(''):'<div class="empty">Abhi malik se advance ki entry nahi hai.</div>';
+ renderWeeklyReport();
+}
+function transHTML(t){return `<div class="listitem"><div class="row"><div><strong>${safe(t.desc)}</strong><div class="muted">${safe(t.date)} • ${safe(siteName(t.siteId))} • Malik se Advance</div></div><div class="amount green">+${money(t.amount)}<div style="text-align:right;margin-top:5px"><button class="danger" onclick="deleteItem('transactions','${t.id}')">Delete</button></div></div></div></div>`}
+function exportData(){const blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Sahu-Construction-Backup-'+today()+'.json';a.click();URL.revokeObjectURL(a.href)}
+function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!d.sites||!d.labours)throw Error();if(confirm('Current data replace karke backup restore karein?')){db={...db,...d};save();alert('Backup restore ho gaya.')}}catch(err){alert('Backup file sahi nahi hai.')}e.target.value=''};r.readAsText(f)}
+function clearAll(){if(confirm('Saara app data permanently delete karna hai? Backup ke bina wapas nahi milega.')&&confirm('Last confirmation: sach mein sab delete karein?')){db={sites:[],labours:[],attendance:[],advances:[],transactions:[]};save()}}
+$('attLabour').addEventListener('change',()=>{const l=db.labours.find(x=>x.id===$('attLabour').value);$('attRate').value=l?l.rate:''});
+load();
+['attDate','advanceDate','incDate','reportWeekDate'].forEach(id=>$(id).value=today());
+render();
+if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+</script>
+</body>
+</html>
