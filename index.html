@@ -127,7 +127,7 @@ hr{border:0;border-top:1px solid var(--line);margin:12px 0}
 
 <section id="reports" class="view">
  <h2>📊 Site-wise Reports / Hisaab</h2>
- <div class="panel" style="border:2px solid var(--green2)"><label for="reportSite">1. Sabse pehle Site select karo *</label><select id="reportSite" required onchange="render()"><option value="">Pehle site select karo</option></select><div class="muted" style="margin-top:7px">Har site ka report alag dikhega. Doosri site ka hisaab ismein mix nahi hoga.</div></div>
+ <div class="panel" style="border:2px solid var(--green2)"><label for="reportSite">1. Sabse pehle Site select karo *</label><select id="reportSite" required onchange="render()"><option value="">Pehle site select karo</option></select><div class="muted" style="margin-top:7px">Har site ka report alag dikhega. Doosri site ka hisaab ismein mix nahi hoga.</div><label for="reportWeekDate" style="display:block;margin-top:12px">2. Har hafte ka alag register (Monday–Sunday)</label><div class="actions" style="margin-top:8px"><button type="button" class="secondary" onclick="shiftReportWeek(-7)">← Pichhla hafta</button><button type="button" class="secondary" onclick="setCurrentReportWeek()">Aaj ka hafta</button><button type="button" class="secondary" onclick="shiftReportWeek(7)">Agla hafta →</button></div><label for="reportWeekDate" style="display:block;margin-top:10px">Ya tareekh chun kar us hafte ka record kholo</label><input id="reportWeekDate" type="date" onchange="render()"><div id="selectedWeekLabel" class="chip" style="display:inline-block;margin-top:8px">Selected week</div><div class="muted" style="margin-top:6px">Har Monday naya hafta khud select hota hai. Purane hafte ka record isi tarah alag rahega; pichhla hafta kholne par usi ki hajiri aur payment status dikhega. Naya hafta purane record ko delete nahi karega.</div></div>
  <div class="stats">
   <div class="stat"><small>Attendance Days</small><strong id="repDays">0</strong></div>
   <div class="stat"><small>Labour Wages</small><strong id="repWages">₹0</strong></div>
@@ -195,6 +195,10 @@ function toggleWeekAttendance(siteId,labourId,date){
 function setWeeklyPaid(siteId,weekStart,labourId,paid){
  if(!db.weeklyPayments)db.weeklyPayments={};const key=`${siteId}|${weekStart}|${labourId}`;if(paid)db.weeklyPayments[key]=true;else delete db.weeklyPayments[key];save();
 }
+function shiftReportWeek(offset){
+ const input=$('reportWeekDate');const base=new Date((input.value||today())+'T12:00:00');base.setDate(base.getDate()+offset);input.value=localDateKey(base);render();
+}
+function setCurrentReportWeek(){ $('reportWeekDate').value=today(); render(); }
 function renderWeeklyReport(){
  const siteId=$('reportSite').value;
  if(!siteId){
@@ -203,9 +207,10 @@ function renderWeeklyReport(){
   ['repDays'].forEach(id=>$(id).textContent='0');['repWages','repAdvance','repIncome'].forEach(id=>$(id).textContent=money(0));return;
  }
  const days=[];const now=new Date();now.setHours(12,0,0,0);
- const monday=new Date(now);monday.setDate(now.getDate()-((now.getDay()+6)%7));
+ const selectedDate=$('reportWeekDate').value||localDateKey(now);const anchor=new Date(selectedDate+'T12:00:00');
+ const monday=new Date(anchor);monday.setDate(anchor.getDate()-((anchor.getDay()+6)%7));
  for(let i=0;i<7;i++){const d=new Date(monday);d.setDate(monday.getDate()+i);const key=localDateKey(d);const at=db.attendance.filter(a=>a.siteId===siteId&&a.date===key);const tx=db.transactions.filter(t=>t.siteId===siteId&&t.date===key);const adv=db.advances.filter(a=>a.siteId===siteId&&a.date===key);days.push({key,day:d.toLocaleDateString('en-IN',{weekday:'long'}),shortDay:d.toLocaleDateString('en-IN',{weekday:'short'}),date:dateLabel(key,{day:'2-digit',month:'short'}),hajiri:total(at,a=>a.days),wages:total(at,a=>a.days*a.rate),advance:total(adv),income:total(tx.filter(t=>t.type==='income'))})}
- const weekStart=days[0].key;
+ const weekStart=days[0].key;const weekEnd=days[6].key;const weekLabel=dateLabel(weekStart,{day:'2-digit',month:'short',year:'numeric'})+' – '+dateLabel(weekEnd,{day:'2-digit',month:'short',year:'numeric'});$('selectedWeekLabel').textContent='Selected week: '+weekLabel;document.querySelectorAll('#reports .sectiontop .chip').forEach(el=>el.textContent=weekLabel);
  const workers=db.labours.slice().sort((a,b)=>a.name.localeCompare(b.name,'en'));
  const attendanceFor=(labourId,key)=>db.attendance.filter(a=>a.siteId===siteId&&a.labourId===labourId&&a.date===key&&Number(a.days)>0);
  const payKey=labourId=>`${siteId}|${weekStart}|${labourId}`;
@@ -245,7 +250,7 @@ function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileRe
 function clearAll(){if(confirm('Saara app data permanently delete karna hai? Backup ke bina wapas nahi milega.')&&confirm('Last confirmation: sach mein sab delete karein?')){db={sites:[],labours:[],attendance:[],advances:[],transactions:[]};save()}}
 $('attLabour').addEventListener('change',()=>{const l=db.labours.find(x=>x.id===$('attLabour').value);$('attRate').value=l?l.rate:''});
 load();
-['attDate','advanceDate','incDate'].forEach(id=>$(id).value=today());
+['attDate','advanceDate','incDate','reportWeekDate'].forEach(id=>$(id).value=today());
 render();
 if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js').catch(()=>{});
 </script>
