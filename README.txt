@@ -1,18 +1,7 @@
-SAHU CONSTRUCTION — WEEKLY LABOUR REGISTER UPDATE
+SAHU CONSTRUCTION - MALIK ADVANCE UPDATE
 
-WHAT CHANGED
-- Report is site-specific: select a site first.
-- Monday–Sunday labour attendance register with each date and weekday shown in the header.
-- Tap P/A for each worker/day to mark present or absent.
-- Total days and total wage amount per worker.
-- Paid/Unpaid checkbox per worker for that site and week.
-- Existing site, labour, attendance, advance, income and expense features remain.
+Upload/replace index.html and sw.js in the ROOT of your existing GitHub Pages repository. Keep the same localStorage key; this update is designed to preserve sites, labour, attendance, labour advances, weekly payment ticks, and existing received-payment records in the same browser.
 
-UPDATE LIVE APP
-1. Download/extract this ZIP.
-2. In the same GitHub repository, replace the old index.html with this index.html and also replace sw.js. Keep manifest.json and icons unchanged if desired.
-3. Commit changes.
-4. Open the same GitHub Pages URL in Chrome; refresh after the deployment completes. If the installed app still shows the old screen, close it and reopen; a hard refresh may be needed.
+Changes: removed Kharcha/expense UI remains removed; replaced Aamdani/Party Payment labels and form with Malik se Mila Advance (date + site + amount + optional note); weekly Monday-Sunday report shows daily Malik se Advance and the weekly total, alongside labour wages and advances paid to workers. No misleading net/baki calculation.
 
-IMPORTANT
-Data is saved locally in the browser on this phone. Back up regularly. This prototype has no cloud sync.
+IMPORTANT: Do not clear browser/site storage. Make a Backup JSON from the app before updating if possible. Existing records entered under Aamdani are displayed as Malik se Advance.

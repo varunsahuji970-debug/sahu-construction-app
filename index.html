@@ -44,7 +44,7 @@ hr{border:0;border-top:1px solid var(--line);margin:12px 0}
 .weekbar-date{font-size:10px;font-weight:750;line-height:1.2}
 .weekbar-day{font-size:10px;color:var(--muted);line-height:1.2}
 .weekly-legend{display:flex;gap:12px;flex-wrap:wrap;margin:10px 0 14px;font-size:11px;color:var(--muted)}
-.legend-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}.wage-dot{background:#1f6a4a}.income-dot{background:#2876c7}.expense-dot{background:#d97706}
+.legend-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}.wage-dot{background:#1f6a4a}.income-dot{background:#2876c7}
 .weekly-table{overflow-x:auto}.weekly-table table{width:100%;border-collapse:collapse;font-size:11px;min-width:530px}.weekly-table th,.weekly-table td{padding:9px 7px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}.weekly-table th:first-child,.weekly-table td:first-child{text-align:left}.weekly-table th{color:var(--muted);font-weight:750;background:#f8faf8}.weekly-table tr.today-row td{background:#f0f8f3;font-weight:750}
 .attendance-register{overflow-x:auto;margin-top:10px}.attendance-register table{width:100%;border-collapse:separate;border-spacing:0;font-size:11px;min-width:760px}.attendance-register th,.attendance-register td{padding:7px 6px;border:1px solid var(--line);text-align:center;white-space:nowrap}.attendance-register th{background:#f0f6f2;color:var(--green);font-weight:800}.attendance-register th:first-child,.attendance-register td:first-child{text-align:left;position:sticky;left:0;background:#fff;z-index:1;min-width:118px}.attendance-register th:first-child{background:#f0f6f2;z-index:2}.attendance-register .datehead{display:block;font-size:10px;color:var(--muted);font-weight:600;margin-top:3px}.attendance-register .daycell{min-width:48px}.attendance-register .markbtn{min-width:34px;border:1px solid var(--line);border-radius:7px;padding:5px 6px;font-size:11px;font-weight:850;background:#fff;cursor:pointer}.attendance-register .markbtn.present{background:#e4f5e9;color:#146c38;border-color:#9dd6b0}.attendance-register .markbtn.absent{background:#fff0ef;color:#a51f17;border-color:#ffc9c5}.attendance-register .paidcell{display:flex;align-items:center;justify-content:center;gap:4px}.attendance-register .paidcell input{width:17px;height:17px;accent-color:var(--green2)}.attendance-register .totalrow td{font-weight:850;background:#f8faf8}.attendance-register .totalrow td:first-child{background:#f8faf8}
 @media(max-width:380px){.weekly-chart{gap:3px}.weekbar-value,.weekbar-date,.weekbar-day{font-size:9px}}
@@ -58,18 +58,17 @@ hr{border:0;border-top:1px solid var(--line);margin:12px 0}
 <section id="dashboard" class="view active">
  <div class="sectiontop"><div><h2>Namaste, Thekedaar Ji 👷</h2><div class="muted" id="todayLabel"></div></div><button class="secondary smallbtn" onclick="exportData()">⬇ Backup</button></div>
  <div class="stats">
-  <div class="stat"><small>Total Aamdani</small><strong id="dashIncome">₹0</strong><span class="tag">All entries</span></div>
-  <div class="stat"><small>Total Kharcha</small><strong id="dashExpense">₹0</strong><span class="tag">All entries</span></div>
-  <div class="stat"><small>Net Hisab</small><strong id="dashNet">₹0</strong><span class="tag">Income − expense</span></div>
+  <div class="stat"><small>Malik se Advance</small><strong id="dashIncome">₹0</strong><span class="tag">Owner se mila</span></div>
+  <div class="stat"><small>Labour Wages</small><strong id="dashWages">₹0</strong><span class="tag">Attendance-based</span></div>
+  <div class="stat"><small>Total Advance</small><strong id="dashAdvance">₹0</strong><span class="tag">Labour advance</span></div>
   <div class="stat"><small>Active Sites</small><strong id="dashSites">0</strong><span class="tag">Project count</span></div>
  </div>
  <div class="panel"><h2>Quick Entry / Jaldi Entry</h2><div class="actions">
   <button class="action" onclick="showView('attendance')">🗓️ Hajiri<span>Daily attendance</span></button>
-  <button class="action" onclick="showView('expenses')">💸 Kharcha<span>Site expenses</span></button>
-  <button class="action" onclick="showView('income')">💰 Aamdani<span>Party payment</span></button>
+  <button class="action" onclick="showView('income')">💰 Malik Advance<span>Owner se mila paisa</span></button>
   <button class="action" onclick="showView('labour')">👷 Mazdoor<span>Labour & advance</span></button>
  </div></div>
- <div class="panel"><div class="row"><h2>Recent Transactions</h2><button class="secondary smallbtn" onclick="showView('reports')">Full report</button></div><div id="recentList" class="muted">Abhi koi entry nahi.</div></div>
+ <div class="panel"><div class="row"><h2>Recent Malik Advances</h2><button class="secondary smallbtn" onclick="showView('reports')">Full report</button></div><div id="recentList" class="muted">Abhi koi entry nahi.</div></div>
  <div class="note">📌 Ye prototype data isi browser/phone mein save karta hai. Browser data clear ya phone change karne se pehle Backup download kar lena.</div>
 </section>
 
@@ -115,28 +114,15 @@ hr{border:0;border-top:1px solid var(--line);margin:12px 0}
  <div class="panel"><div class="row"><h2>Attendance Records</h2><span class="chip" id="attTotal">0 entries</span></div><div id="attendanceList"></div></div>
 </section>
 
-<section id="expenses" class="view">
- <h2>💸 Site Kharcha / Expenses</h2>
- <div class="panel"><form onsubmit="saveTransaction(event,'expense')">
-  <div class="formgrid"><div><label>Date *</label><input id="expDate" type="date" required></div><div><label>Site *</label><select id="expSite" required></select></div></div>
-  <label>Expense Category *</label><select id="expCategory"><option>Labour Payment</option><option>Material</option><option>Transport</option><option>Machine / Tools</option><option>Food / Water</option><option>Other</option></select>
-  <label>Details *</label><input id="expDesc" required placeholder="Jaise: cement 20 bags">
-  <label>Amount ₹ *</label><input id="expAmount" type="number" min="1" required>
-  <button class="primary" type="submit">Save Kharcha</button>
- </form></div>
- <div class="panel"><h2>Kharcha Records</h2><div id="expenseList"></div></div>
-</section>
-
 <section id="income" class="view">
- <h2>💰 Party Payment / Aamdani</h2>
- <div class="panel"><form onsubmit="saveTransaction(event,'income')">
+ <h2>💰 Malik se Mila Advance</h2>
+ <div class="panel"><form onsubmit="saveIncome(event)">
   <div class="formgrid"><div><label>Date *</label><input id="incDate" type="date" required></div><div><label>Site *</label><select id="incSite" required></select></div></div>
-  <label>Payment Details *</label><input id="incDesc" required placeholder="Advance / slab payment / running bill">
-  <label>Amount Received ₹ *</label><input id="incAmount" type="number" min="1" required>
-  <label>Payment Mode</label><select id="incMode"><option>Cash</option><option>UPI</option><option>Bank</option><option>Cheque</option></select>
-  <button class="primary" type="submit">Save Aamdani</button>
+  <label>Malik se mili Rakam ₹ *</label><input id="incAmount" type="number" min="1" required>
+  <label>Note (optional)</label><input id="incDesc" placeholder="Jaise: slab ke liye advance">
+  <button class="primary" type="submit">Save Malik Advance</button>
  </form></div>
- <div class="panel"><h2>Aamdani Records</h2><div id="incomeList"></div></div>
+ <div class="panel"><h2>Malik se Mile Advance ke Records</h2><div id="incomeList"></div></div>
 </section>
 
 <section id="reports" class="view">
@@ -146,15 +132,15 @@ hr{border:0;border-top:1px solid var(--line);margin:12px 0}
   <div class="stat"><small>Attendance Days</small><strong id="repDays">0</strong></div>
   <div class="stat"><small>Labour Wages</small><strong id="repWages">₹0</strong></div>
   <div class="stat"><small>Site Advance Given</small><strong id="repAdvance">₹0</strong></div>
-  <div class="stat"><small>Party Payments</small><strong id="repIncome">₹0</strong></div>
+  <div class="stat"><small>Malik se Advance</small><strong id="repIncome">₹0</strong></div>
  </div>
  <div class="panel"><div class="sectiontop"><div><h2>📋 Mazdoor Hajiri Register (Monday–Sunday)</h2><div class="muted">Pehle site select karo. Har mazdoor ke saamne P/A dabakar hajiri mark karo; aakhri column mein payment tick karo.</div></div><span class="chip">Mon – Sun</span></div>
   <div id="attendanceRegister" class="attendance-register"></div>
   <p class="muted">P = Present • A = Absent. P/A par tap karke badal sakte ho. Present mark karne par default 1 din aur mazdoor ka daily rate lagega. Half-day/extra adjustment ke liye Daily Hajiri section use karo.</p>
  </div>
- <div class="panel"><div class="sectiontop"><div><h2>📅 Weekly Site Hisab (Monday–Sunday)</h2><div class="muted">Selected site ka roz ka wages, advance, income aur expense</div></div><span class="chip">Mon – Sun</span></div>
+ <div class="panel"><div class="sectiontop"><div><h2>📅 Weekly Site Hisab (Monday–Sunday)</h2><div class="muted">Selected site ka roz ka wages, labour advance aur malik se mila advance</div></div><span class="chip">Mon – Sun</span></div>
   <div id="weeklyChart" class="weekly-chart" aria-label="Weekly wage chart"></div>
-  <div class="weekly-legend"><span><i class="legend-dot wage-dot"></i> Labour wages</span><span><i class="legend-dot income-dot"></i> Aamdani</span><span><i class="legend-dot expense-dot"></i> Kharcha</span></div>
+  <div class="weekly-legend"><span><i class="legend-dot wage-dot"></i> Labour wages</span><span><i class="legend-dot income-dot"></i> Malik se Advance</span></div>
   <div id="weeklyTable" class="weekly-table"></div>
  </div>
  <div class="panel"><h2>Site-wise Summary</h2><div id="siteSummary"></div></div>
@@ -170,8 +156,7 @@ hr{border:0;border-top:1px solid var(--line);margin:12px 0}
  <button data-view="sites" onclick="showView('sites')"><b>🏠</b>Sites</button>
  <button data-view="labour" onclick="showView('labour')"><b>👷</b>Labour</button>
  <button data-view="attendance" onclick="showView('attendance')"><b>🗓️</b>Hajiri</button>
- <button data-view="expenses" onclick="showView('expenses')"><b>💸</b>Kharcha</button>
- <button data-view="income" onclick="showView('income')"><b>₹</b>Aamdani</button>
+ <button data-view="income" onclick="showView('income')"><b>₹</b>Malik Advance</button>
  <button data-view="reports" onclick="showView('reports')"><b>▤</b>Report</button>
 </nav>
 <script>
@@ -196,7 +181,7 @@ function saveLabour(e){e.preventDefault();const id=$('labourId').value||uid();co
 function editLabour(id){const x=db.labours.find(x=>x.id===id);if(!x)return;$('labourId').value=x.id;$('labourName').value=x.name;$('labourPhone').value=x.phone;$('labourRate').value=x.rate;$('labourRole').value=x.role;openForm('labourForm')}
 function saveAdvance(e){e.preventDefault();db.advances.push({id:uid(),siteId:$('advanceSite').value,labourId:$('advanceLabour').value,amount:Number($('advanceAmount').value),date:$('advanceDate').value,note:$('advanceNote').value.trim()});e.target.reset();$('advanceDate').value=today();save()}
 function saveAttendance(e){e.preventDefault();const labour=db.labours.find(x=>x.id===$('attLabour').value);db.attendance.push({id:uid(),date:$('attDate').value,siteId:$('attSite').value,labourId:labour.id,days:Number($('attDays').value),rate:Number($('attRate').value||labour.rate),note:$('attNote').value.trim()});e.target.reset();$('attDate').value=today();$('attRate').value='';save()}
-function saveTransaction(e,type){e.preventDefault();const p=type==='expense'?'exp':'inc';db.transactions.push({id:uid(),type,date:$(p+'Date').value,siteId:$(p+'Site').value,category:type==='expense'?$('expCategory').value:$('incMode').value,desc:$(p+'Desc').value.trim(),amount:Number($(p+'Amount').value)});e.target.reset();$(p+'Date').value=today();save()}
+function saveIncome(e){e.preventDefault();db.transactions.push({id:uid(),type:'income',date:$('incDate').value,siteId:$('incSite').value,category:'Malik se Advance',desc:$('incDesc').value.trim()||'Malik se advance',amount:Number($('incAmount').value)});e.target.reset();$('incDate').value=today();save()}
 function deleteItem(collection,id){if(confirm('Is entry ko delete karna hai?')){db[collection]=db[collection].filter(x=>x.id!==id);save()}}
 function total(arr,fn=x=>x.amount||0){return arr.reduce((s,x)=>s+Number(fn(x)||0),0)}
 function localDateKey(d){const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${day}`}
@@ -219,7 +204,7 @@ function renderWeeklyReport(){
  }
  const days=[];const now=new Date();now.setHours(12,0,0,0);
  const monday=new Date(now);monday.setDate(now.getDate()-((now.getDay()+6)%7));
- for(let i=0;i<7;i++){const d=new Date(monday);d.setDate(monday.getDate()+i);const key=localDateKey(d);const at=db.attendance.filter(a=>a.siteId===siteId&&a.date===key);const tx=db.transactions.filter(t=>t.siteId===siteId&&t.date===key);const adv=db.advances.filter(a=>a.siteId===siteId&&a.date===key);days.push({key,day:d.toLocaleDateString('en-IN',{weekday:'long'}),shortDay:d.toLocaleDateString('en-IN',{weekday:'short'}),date:dateLabel(key,{day:'2-digit',month:'short'}),hajiri:total(at,a=>a.days),wages:total(at,a=>a.days*a.rate),advance:total(adv),income:total(tx.filter(t=>t.type==='income')),expense:total(tx.filter(t=>t.type==='expense'))})}
+ for(let i=0;i<7;i++){const d=new Date(monday);d.setDate(monday.getDate()+i);const key=localDateKey(d);const at=db.attendance.filter(a=>a.siteId===siteId&&a.date===key);const tx=db.transactions.filter(t=>t.siteId===siteId&&t.date===key);const adv=db.advances.filter(a=>a.siteId===siteId&&a.date===key);days.push({key,day:d.toLocaleDateString('en-IN',{weekday:'long'}),shortDay:d.toLocaleDateString('en-IN',{weekday:'short'}),date:dateLabel(key,{day:'2-digit',month:'short'}),hajiri:total(at,a=>a.days),wages:total(at,a=>a.days*a.rate),advance:total(adv),income:total(tx.filter(t=>t.type==='income'))})}
  const weekStart=days[0].key;
  const workers=db.labours.slice().sort((a,b)=>a.name.localeCompare(b.name,'en'));
  const attendanceFor=(labourId,key)=>db.attendance.filter(a=>a.siteId===siteId&&a.labourId===labourId&&a.date===key&&Number(a.days)>0);
@@ -229,40 +214,38 @@ function renderWeeklyReport(){
  $('attendanceRegister').innerHTML=workers.length?`<table><thead><tr><th>Mazdoor / Worker</th>${days.map(d=>`<th class="daycell">${safe(d.date)}<span class="datehead">${safe(d.day)}</span></th>`).join('')}<th>Total Days</th><th>Total Amount</th><th>Paid?</th></tr></thead><tbody>${workerStats.map(w=>`<tr><td><strong>${safe(w.labour.name)}</strong><span class="datehead">${money(w.labour.rate)}/day</span></td>${w.perDay.map((v,i)=>`<td><button class="markbtn ${v.present?'present':'absent'}" aria-label="${safe(w.labour.name)} ${safe(days[i].day)} ${v.present?'Present':'Absent'}" onclick="toggleWeekAttendance('${safe(siteId)}','${safe(w.labour.id)}','${safe(days[i].key)}')">${v.present?(v.days===0.5?'P½':'P'):'A'}</button></td>`).join('')}<td>${w.totalDays}</td><td>${money(w.amount)}</td><td><label class="paidcell"><input type="checkbox" ${w.paid?'checked':''} aria-label="Payment paid for ${safe(w.labour.name)}" onchange="setWeeklyPaid('${safe(siteId)}','${safe(weekStart)}','${safe(w.labour.id)}',this.checked)"><span>${w.paid?'Paid':'Unpaid'}</span></label></td></tr>`).join('')}<tr class="totalrow"><td>कुल</td>${dayTotals.map(t=>`<td>${t.days? t.days+' d':'—'}</td>`).join('')}<td>${total(workerStats,w=>w.totalDays)}</td><td>${money(total(workerStats,w=>w.amount))}</td><td>—</td></tr></tbody></table>`:'<div class="empty">Pehle Labour section mein mazdoor add karo. Phir yahan site-wise Monday–Sunday register dikhega.</div>';
  const max=Math.max(1,...days.map(d=>d.wages));
  $('weeklyChart').innerHTML=days.map(d=>{const h=d.wages?Math.max(4,Math.round(d.wages/max*92)):3;return `<div class="weekbar-wrap" title="${safe(dateLabel(d.key,{weekday:'long',day:'numeric',month:'long',year:'numeric'}))}: wages ${money(d.wages)}"><div class="weekbar-value">${d.wages?money(d.wages):'—'}</div><div class="weekbar" style="height:${h}px"></div><div class="weekbar-date">${safe(d.date)}</div><div class="weekbar-day">${safe(d.shortDay)}</div></div>`}).join('');
- const sumH=total(days,d=>d.hajiri),sumW=total(days,d=>d.wages),sumA=total(days,d=>d.advance),sumI=total(days,d=>d.income),sumE=total(days,d=>d.expense),sumN=sumI-sumE-sumW-sumA;
- $('weeklyTable').innerHTML=`<table><thead><tr><th>दिन / तारीख</th><th>हाजिरी</th><th>मजदूरी</th><th>एडवांस</th><th>आमदनी</th><th>खर्चा</th><th>बाकी*</th></tr></thead><tbody>${days.map(d=>`<tr class="${d.key===localDateKey(now)?'today-row':''}"><td>${safe(d.day)}<br><span class="muted">${safe(dateLabel(d.key,{day:'2-digit',month:'short',year:'numeric'}))}</span></td><td>${d.hajiri}</td><td>${money(d.wages)}</td><td>${money(d.advance)}</td><td class="green">${money(d.income)}</td><td class="red">${money(d.expense)}</td><td class="${d.income-d.expense-d.wages-d.advance<0?'red':'green'}">${money(d.income-d.expense-d.wages-d.advance)}</td></tr>`).join('')}<tr><th>कुल (Mon–Sun)</th><th>${sumH}</th><th>${money(sumW)}</th><th>${money(sumA)}</th><th class="green">${money(sumI)}</th><th class="red">${money(sumE)}</th><th class="${sumN<0?'red':'green'}">${money(sumN)}</th></tr></tbody></table><p class="muted">* बाकी = आमदनी − खर्चा − मजदूरी − एडवांस। जिस दिन एंट्री नहीं है, उस दिन ₹0 दिखेगा। केवल चुनी हुई साइट का हिसाब शामिल है।</p>`;
+ const sumH=total(days,d=>d.hajiri),sumW=total(days,d=>d.wages),sumA=total(days,d=>d.advance),sumI=total(days,d=>d.income);
+ $('weeklyTable').innerHTML=`<table><thead><tr><th>दिन / तारीख</th><th>हाजिरी</th><th>मजदूरी</th><th>लेबर को एडवांस</th><th>मालिक से मिला एडवांस</th></tr></thead><tbody>${days.map(d=>`<tr class="${d.key===localDateKey(now)?'today-row':''}"><td>${safe(d.day)}<br><span class="muted">${safe(dateLabel(d.key,{day:'2-digit',month:'short',year:'numeric'}))}</span></td><td>${d.hajiri}</td><td>${money(d.wages)}</td><td>${money(d.advance)}</td><td class="green">${money(d.income)}</td></tr>`).join('')}<tr><th>कुल (Mon–Sun)</th><th>${sumH}</th><th>${money(sumW)}</th><th>${money(sumA)}</th><th class="green">${money(sumI)}</th></tr></tbody></table><p class="muted">जिस दिन मालिक से एडवांस की एंट्री नहीं है, उस दिन ₹0 दिखेगा। केवल चुनी हुई साइट का हिसाब शामिल है।</p>`;
  $('repDays').textContent=sumH;$('repWages').textContent=money(sumW);$('repAdvance').textContent=money(sumA);$('repIncome').textContent=money(sumI);
- const s=db.sites.find(x=>x.id===siteId);const siteInc=total(db.transactions.filter(t=>t.siteId===siteId&&t.type==='income'));const siteExp=total(db.transactions.filter(t=>t.siteId===siteId&&t.type==='expense'));const siteW=total(db.attendance.filter(a=>a.siteId===siteId),a=>a.days*a.rate);const siteAdv=total(db.advances.filter(a=>a.siteId===siteId));
- $('siteSummary').innerHTML=`<div class="listitem"><strong>${safe(s?.name||'Selected Site')}</strong><div class="muted">${safe(s?.location||'Location not added')}</div><div class="row muted"><span>Total Aamdani</span><b class="green">${money(siteInc)}</b></div><div class="row muted"><span>Kharcha</span><b>${money(siteExp)}</b></div><div class="row muted"><span>Hajiri / Mazdoori</span><b>${money(siteW)}</b></div><div class="row muted"><span>Advance</span><b>${money(siteAdv)}</b></div><div class="row"><span>Net (recorded)</span><b class="${siteInc-siteExp-siteW-siteAdv<0?'red':'green'}">${money(siteInc-siteExp-siteW-siteAdv)}</b></div></div><p class="muted">Note: purane advance records jinmein site select nahi thi, woh kisi site ke report mein count nahi honge. Naya advance bharte waqt site zaroor select karna.</p>`;
+ const s=db.sites.find(x=>x.id===siteId);const siteInc=total(db.transactions.filter(t=>t.siteId===siteId&&t.type==='income'));const siteW=total(db.attendance.filter(a=>a.siteId===siteId),a=>a.days*a.rate);const siteAdv=total(db.advances.filter(a=>a.siteId===siteId));
+ $('siteSummary').innerHTML=`<div class="listitem"><strong>${safe(s?.name||'Selected Site')}</strong><div class="muted">${safe(s?.location||'Location not added')}</div><div class="row muted"><span>Malik se mila advance</span><b class="green">${money(siteInc)}</b></div><div class="row muted"><span>Hajiri / Mazdoori</span><b>${money(siteW)}</b></div><div class="row muted"><span>Labour ko diya advance</span><b>${money(siteAdv)}</b></div></div><p class="muted">Har entry mein sahi site select karna, taaki doosri site ka hisaab mix na ho.</p>`;
 }
 function render(){
  $('todayLabel').textContent=new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'short',year:'numeric'});
- ['attSite','expSite','incSite','advanceSite'].forEach(id=>fillSelect(id,db.sites,'Site select karo',x=>x.name));
+ ['attSite','incSite','advanceSite'].forEach(id=>fillSelect(id,db.sites,'Site select karo',x=>x.name));
  fillSelect('reportSite',db.sites,'Pehle site select karo',x=>x.name);
  if(!$('reportSite').value && db.sites.length) $('reportSite').value=db.sites[0].id;
  ['attLabour','advanceLabour'].forEach(id=>fillSelect(id,db.labours,'Mazdoor select karo',x=>x.name+' — '+money(x.rate)+'/day'));
- const income=total(db.transactions.filter(x=>x.type==='income')),expenses=total(db.transactions.filter(x=>x.type==='expense'))+total(db.attendance,x=>x.days*x.rate);
- $('dashIncome').textContent=money(income);$('dashExpense').textContent=money(expenses);$('dashNet').textContent=money(income-expenses);$('dashNet').className=income-expenses<0?'red':'';$('dashSites').textContent=db.sites.length;
+ const income=total(db.transactions.filter(x=>x.type==='income')),wages=total(db.attendance,x=>x.days*x.rate),advance=total(db.advances);
+ $('dashIncome').textContent=money(income);$('dashWages').textContent=money(wages);$('dashAdvance').textContent=money(advance);$('dashSites').textContent=db.sites.length;
  $('sitesList').innerHTML=db.sites.length?db.sites.map(s=>`<div class="listitem"><div class="row"><div><strong>${safe(s.name)}</strong><div class="muted">${safe(s.location||'Location not added')} • Contract ${money(s.contract)}</div><div class="muted">${safe(s.notes||'')}</div></div><button class="secondary smallbtn" onclick="editSite('${s.id}')">Edit</button></div></div>`).join(''):'<div class="empty">Abhi site nahi hai. Pehle + Add Site dabao.</div>';
- $('labourList').innerHTML=db.labours.length?db.labours.map(l=>{const wage=total(db.attendance.filter(a=>a.labourId===l.id),a=>a.days*a.rate),adv=total(db.advances.filter(a=>a.labourId===l.id)),paid=total(db.transactions.filter(t=>t.type==='expense'&&t.category==='Labour Payment'&&t.desc.toLowerCase().includes(l.name.toLowerCase())));return `<div class="listitem"><div class="row"><div><strong>${safe(l.name)}</strong><div class="muted">${safe(l.role||'Labour')} • ${money(l.rate)}/day</div><div class="muted">Recorded wages: ${money(wage)} • Advance: ${money(adv)}</div></div><button class="secondary smallbtn" onclick="editLabour('${l.id}')">Edit</button></div></div>`}).join(''):'<div class="empty">Abhi mazdoor add nahi kiya.</div>';
+ $('labourList').innerHTML=db.labours.length?db.labours.map(l=>{const wage=total(db.attendance.filter(a=>a.labourId===l.id),a=>a.days*a.rate),adv=total(db.advances.filter(a=>a.labourId===l.id));return `<div class="listitem"><div class="row"><div><strong>${safe(l.name)}</strong><div class="muted">${safe(l.role||'Labour')} • ${money(l.rate)}/day</div><div class="muted">Recorded wages: ${money(wage)} • Advance: ${money(adv)}</div></div><button class="secondary smallbtn" onclick="editLabour('${l.id}')">Edit</button></div></div>`}).join(''):'<div class="empty">Abhi mazdoor add nahi kiya.</div>';
  $('advanceList').innerHTML=db.advances.length?db.advances.slice().reverse().map(a=>`<div class="listitem"><div class="row"><div><strong>${safe(labourName(a.labourId))} — ${money(a.amount)}</strong><div class="muted">${safe(a.date)} • ${safe(siteName(a.siteId))} • ${safe(a.note)}</div></div><button class="danger" onclick="deleteItem('advances','${a.id}')">Delete</button></div></div>`).join(''):'<div class="empty">Advance record nahi hai.</div>';
  $('attendanceList').innerHTML=db.attendance.length?db.attendance.slice().reverse().map(a=>`<div class="listitem"><div class="row"><div><strong>${safe(labourName(a.labourId))} — ${money(a.days*a.rate)}</strong><div class="muted">${safe(a.date)} • ${safe(siteName(a.siteId))}</div><div class="muted">${a.days} day × ${money(a.rate)} ${safe(a.note)}</div></div><button class="danger" onclick="deleteItem('attendance','${a.id}')">Delete</button></div></div>`).join(''):'<div class="empty">Hajiri record nahi hai.</div>';
  $('attTotal').textContent=db.attendance.length+' entries';
- const expensesList=db.transactions.filter(x=>x.type==='expense');
  const incomeList=db.transactions.filter(x=>x.type==='income');
- $('expenseList').innerHTML=expensesList.length?expensesList.slice().reverse().map(t=>transHTML(t)).join(''):'<div class="empty">Kharcha record nahi hai.</div>';
- $('incomeList').innerHTML=incomeList.length?incomeList.slice().reverse().map(t=>transHTML(t)).join(''):'<div class="empty">Aamdani record nahi hai.</div>';
- const recent=db.transactions.slice().reverse().slice(0,5);
- $('recentList').innerHTML=recent.length?recent.map(t=>transHTML(t)).join(''):'<div class="empty">Abhi koi transaction nahi. Site add karke entry shuru karo.</div>';
+ $('incomeList').innerHTML=incomeList.length?incomeList.slice().reverse().map(t=>transHTML(t)).join(''):'<div class="empty">Malik se advance ka record nahi hai.</div>';
+ const recent=db.transactions.filter(t=>t.type==='income').slice().reverse().slice(0,5);
+ $('recentList').innerHTML=recent.length?recent.map(t=>transHTML(t)).join(''):'<div class="empty">Abhi malik se advance ki entry nahi hai.</div>';
  renderWeeklyReport();
 }
-function transHTML(t){return `<div class="listitem"><div class="row"><div><strong>${safe(t.desc)}</strong><div class="muted">${safe(t.date)} • ${safe(siteName(t.siteId))} • ${safe(t.category||'')}</div></div><div class="amount ${t.type==='income'?'green':'red'}">${t.type==='income'?'+':'−'}${money(t.amount)}<div style="text-align:right;margin-top:5px"><button class="danger" onclick="deleteItem('transactions','${t.id}')">Delete</button></div></div></div></div>`}
+function transHTML(t){return `<div class="listitem"><div class="row"><div><strong>${safe(t.desc)}</strong><div class="muted">${safe(t.date)} • ${safe(siteName(t.siteId))} • Malik se Advance</div></div><div class="amount green">+${money(t.amount)}<div style="text-align:right;margin-top:5px"><button class="danger" onclick="deleteItem('transactions','${t.id}')">Delete</button></div></div></div></div>`}
 function exportData(){const blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Sahu-Construction-Backup-'+today()+'.json';a.click();URL.revokeObjectURL(a.href)}
 function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!d.sites||!d.labours)throw Error();if(confirm('Current data replace karke backup restore karein?')){db={...db,...d};save();alert('Backup restore ho gaya.')}}catch(err){alert('Backup file sahi nahi hai.')}e.target.value=''};r.readAsText(f)}
 function clearAll(){if(confirm('Saara app data permanently delete karna hai? Backup ke bina wapas nahi milega.')&&confirm('Last confirmation: sach mein sab delete karein?')){db={sites:[],labours:[],attendance:[],advances:[],transactions:[]};save()}}
 $('attLabour').addEventListener('change',()=>{const l=db.labours.find(x=>x.id===$('attLabour').value);$('attRate').value=l?l.rate:''});
 load();
-['attDate','advanceDate','expDate','incDate'].forEach(id=>$(id).value=today());
+['attDate','advanceDate','incDate'].forEach(id=>$(id).value=today());
 render();
 if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js').catch(()=>{});
 </script>
