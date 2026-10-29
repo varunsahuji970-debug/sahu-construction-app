@@ -1,12 +1,12 @@
 {
   "name": "Sahu Construction",
   "short_name": "Sahu Works",
-  "description": "Construction business management, labour attendance, advances, income and expenses",
+  "description": "Construction business management, labour attendance, advances and weekly reports",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#f4f7f5",
-  "theme_color": "#123b2b",
+  "background_color": "#111111",
+  "theme_color": "#111111",
   "icons": [
     {
       "src": "./icon-192.png",
