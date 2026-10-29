@@ -184,7 +184,12 @@ const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
 const money=n=>'₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:2});
 const safe=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function load(){try{const v=JSON.parse(localStorage.getItem(KEY));if(v)db={...db,...v}}catch(e){}}
-function save(){localStorage.setItem(KEY,JSON.stringify(db));render()}
+function save(){
+ try{localStorage.setItem(KEY,JSON.stringify(db));}
+ catch(err){alert('Bhai, browser storage mein save nahi ho paaya. Phone ki storage/site permission check karo. Data ko clear mat karna.');return false}
+ try{render()}catch(err){console.error('Render error after save:',err)}
+ return true
+}
 function showView(id){if(['labour','attendance','income','reports'].includes(id)&&(!db.activeSiteId||!db.sites.some(s=>s.id===db.activeSiteId))){alert('Bhai, pehle Home par chalu site select karo.');id='dashboard'}document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id));document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===id));window.scrollTo(0,0);render()}
 function clearActiveSite(){db.activeSiteId='';save();window.scrollTo(0,0)}
 function setActiveSite(siteId){
@@ -212,7 +217,23 @@ function editSite(id){const x=db.sites.find(x=>x.id===id);if(!x)return;$('siteId
 function saveLabour(e){e.preventDefault();const id=$('labourId').value||uid();const obj={id,name:$('labourName').value.trim(),phone:$('labourPhone').value.trim(),rate:Number($('labourRate').value||0),role:$('labourRole').value.trim()};const i=db.labours.findIndex(x=>x.id===id);if(i>=0)db.labours[i]=obj;else db.labours.push(obj);e.target.reset();$('labourId').value='';closeForm('labourForm');save()}
 function editLabour(id){const x=db.labours.find(x=>x.id===id);if(!x)return;$('labourId').value=x.id;$('labourName').value=x.name;$('labourPhone').value=x.phone;$('labourRate').value=x.rate;$('labourRole').value=x.role;openForm('labourForm')}
 function saveAdvance(e){e.preventDefault();db.advances.push({id:uid(),siteId:$('advanceSite').value,labourId:$('advanceLabour').value,amount:Number($('advanceAmount').value),date:$('advanceDate').value,note:$('advanceNote').value.trim()});e.target.reset();$('advanceDate').value=today();save()}
-function saveAttendance(e){e.preventDefault();const labour=db.labours.find(x=>x.id===$('attLabour').value);db.attendance.push({id:uid(),date:$('attDate').value,siteId:$('attSite').value,labourId:labour.id,days:Number($('attDays').value),rate:Number($('attRate').value||labour.rate),note:$('attNote').value.trim()});e.target.reset();$('attDate').value=today();$('attRate').value='';save()}
+function saveAttendance(e){
+ e.preventDefault();
+ const siteId=$('attSite').value||db.activeSiteId||'';
+ const labourId=$('attLabour').value;
+ const labour=db.labours.find(x=>String(x.id)===String(labourId));
+ const date=$('attDate').value;
+ if(!siteId||!db.sites.some(x=>String(x.id)===String(siteId))){alert('Bhai, pehle sahi site select karo.');return}
+ if(!labour){alert('Bhai, pehle Labour section mein mazdoor add karo, phir yahan uska naam select karo.');return}
+ if(!date){alert('Hajiri ki tareekh select karo.');return}
+ const entry={id:uid(),date,siteId,labourId:labour.id,days:Number($('attDays').value),rate:Number($('attRate').value||labour.rate||0),note:$('attNote').value.trim()};
+ db.attendance.push(entry);
+ let stored=false;
+ try{localStorage.setItem(KEY,JSON.stringify(db));stored=true}catch(err){db.attendance=db.attendance.filter(x=>x.id!==entry.id);alert('Hajiri save nahi hui: browser storage ne save rok diya. App ka data clear mat karna.');return}
+ e.target.reset();$('attDate').value=today();$('attRate').value='';
+ try{render()}catch(err){console.error('Attendance saved; render error:',err)}
+ alert('Hajiri save ho gayi bhai!');
+}
 function saveIncome(e){e.preventDefault();db.transactions.push({id:uid(),type:'income',date:$('incDate').value,siteId:$('incSite').value,category:'Malik se Advance',desc:$('incDesc').value.trim()||'Malik se advance',amount:Number($('incAmount').value)});e.target.reset();$('incDate').value=today();save()}
 function deleteItem(collection,id){if(confirm('Is entry ko delete karna hai?')){db[collection]=db[collection].filter(x=>x.id!==id);save()}}
 function total(arr,fn=x=>x.amount||0){return arr.reduce((s,x)=>s+Number(fn(x)||0),0)}
